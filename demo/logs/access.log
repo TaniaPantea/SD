@@ -1,0 +1,11 @@
+172.18.0.1 - - [16/Oct/2025:10:28:01 +0000] "GET /api//hello HTTP/1.1" 401 17 "-" "-" 1 "backend-api@file" "-" 0ms
+172.18.0.1 - user [16/Oct/2025:10:28:13 +0000] "GET /api//hello HTTP/1.1" 502 11 "-" "-" 2 "backend-api@file" "http://backend:5000" 5804ms
+172.18.0.1 - - [16/Oct/2025:10:28:18 +0000] "GET /favicon.ico HTTP/1.1" 404 555 "-" "-" 3 "nginx-frontend@file" "http://nginx:80" 3ms
+172.18.0.1 - - [16/Oct/2025:10:28:52 +0000] "GET /api/hello HTTP/1.1" 401 17 "-" "-" 4 "backend-api@file" "-" 0ms
+172.18.0.1 - user [16/Oct/2025:10:28:52 +0000] "GET /api/hello HTTP/1.1" 502 11 "-" "-" 5 "backend-api@file" "http://backend:5000" 8118ms
+172.18.0.1 - user [16/Oct/2025:10:29:02 +0000] "GET /api/hello HTTP/1.1" 502 11 "-" "-" 6 "backend-api@file" "http://backend:5000" 8096ms
+172.18.0.1 - user [16/Oct/2025:10:31:04 +0000] "GET /api/people HTTP/1.1" 502 11 "-" "-" 8 "backend-api@file" "http://backend:5000" -562ms
+172.18.0.1 - user [16/Oct/2025:10:30:58 +0000] "GET /api/peple HTTP/1.1" 502 11 "-" "-" 7 "backend-api@file" "http://backend:5000" 5821ms
+172.18.0.1 - user [16/Oct/2025:10:31:27 +0000] "GET /api/people HTTP/1.1" 502 11 "-" "-" 9 "backend-api@file" "http://backend:5000" 5756ms
+172.18.0.1 - user [16/Oct/2025:10:31:50 +0000] "GET /api/people HTTP/1.1" 502 11 "-" "-" 10 "backend-api@file" "http://backend:5000" 8086ms
+172.18.0.1 - user [16/Oct/2025:10:35:04 +0000] "GET /api/people HTTP/1.1" 200 2 "-" "-" 1 "backend-api@file" "http://spring-demo:8080" 303ms
