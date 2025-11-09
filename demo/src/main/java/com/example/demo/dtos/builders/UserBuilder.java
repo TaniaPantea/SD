@@ -19,8 +19,7 @@ public class UserBuilder {
                 user.getUsername(),
                 user.getAddress(),
                 user.getAge(),
-                user.getFullName(),
-                user.getPassword()
+                user.getEmail()
         );
     }
 
@@ -29,8 +28,7 @@ public class UserBuilder {
                 userDetailsDTO.getUsername(),
                 userDetailsDTO.getAddress(),
                 userDetailsDTO.getAge(),
-                userDetailsDTO.getPassword(),
-                userDetailsDTO.getFullName()
+                userDetailsDTO.getEmail()
         );
     }
 }

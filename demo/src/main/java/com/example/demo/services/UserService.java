@@ -27,10 +27,10 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<UserDTO> findPersons() {
+    public List<UserDetailsDTO> findPersons() {
         List<User> personList = userRepository.findAll();
         return personList.stream()
-                .map(UserBuilder::toPersonDTO)
+                .map(UserBuilder::toPersonDetailsDTO)
                 .collect(Collectors.toList());
     }
 
@@ -64,8 +64,7 @@ public class UserService {
         user.setUsername(userDTO.getUsername());
         user.setAddress(userDTO.getAddress());
         user.setAge(userDTO.getAge());
-        user.setPassword(userDTO.getPassword());
-        user.setFullName(userDTO.getFullName());
+        user.setEmail(userDTO.getEmail());
 
         userRepository.save(user);
         return UserBuilder.toPersonDetailsDTO(user);

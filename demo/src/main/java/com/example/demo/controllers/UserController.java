@@ -25,20 +25,25 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDTO>> getPeople() {
+    public ResponseEntity<List<UserDetailsDTO>> getPeople() {
         return ResponseEntity.ok(userService.findPersons());
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@Valid @RequestBody UserDetailsDTO person) {
+    public ResponseEntity<UserDetailsDTO> create(@Valid @RequestBody UserDetailsDTO person) {
         UUID id = userService.insert(person);
+
+        person.setId(id);
+
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(id)
                 .toUri();
-        return ResponseEntity.created(location).build(); // 201 + Location header
+
+        return ResponseEntity.created(location).body(person);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDetailsDTO> getPerson(@PathVariable UUID id) {

@@ -1,7 +1,6 @@
 package com.example.demo.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
@@ -31,22 +30,18 @@ public class User implements Serializable{
     @Column(name = "age", nullable = false)
     private int age;
 
-    @NotBlank(message = "Password is mandatory")
-    private String password;
-
-    @NotBlank(message = "Full name is mandatory")
-    private String fullName;
+    @Column(name = "email", nullable = false)
+    private String email;
 
 
     public User() {
     }
 
-    public User(String name, String address, int age, String password, String fullName) {
+    public User(String name, String address, int age, String email) {
         this.username = name;
         this.address = address;
         this.age = age;
-        this.fullName = name;
-        this.password = password;
+        this.email = email;
     }
 
     public UUID getId() {
@@ -57,12 +52,12 @@ public class User implements Serializable{
         this.id = id;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getEmail() {
+        return email;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getUsername() {
@@ -89,11 +84,4 @@ public class User implements Serializable{
         this.age = age;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

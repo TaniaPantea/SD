@@ -4,7 +4,6 @@ package com.example.demo.dtos;
 import com.example.demo.dtos.validators.annotation.AgeLimit;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -20,22 +19,17 @@ public class UserDetailsDTO {
     @NotNull(message = "age is required")
     @AgeLimit(value = 18)
     private Integer age;
-    @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must be at least 6 characters long")
-    private String password;
-
-    private String fullName;
+    private String email;
 
     public UserDetailsDTO() {
     }
 
-    public UserDetailsDTO(UUID id, String username, String address, int age, String fullName, String password) {
+    public UserDetailsDTO(UUID id, String username, String address, int age, String email) {
         this.id = id;
         this.username = username;
         this.address = address;
         this.age = age;
-        this.fullName = fullName;
-        this.password = password;
+        this.email = email;
     }
 
     public UUID getId() {
@@ -70,20 +64,13 @@ public class UserDetailsDTO {
         this.age = age;
     }
 
-    public String getPassword() {
-        return password;
+
+    public String getEmail() {
+        return email;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
@@ -95,12 +82,12 @@ public class UserDetailsDTO {
                 Objects.equals(username, that.username) &&
                 Objects.equals(address, that.address) &&
                 Objects.equals(age, that.age) &&
-                Objects.equals(fullName, that.fullName);
+                Objects.equals(email, that.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, address, age, fullName);
+        return Objects.hash(id, username, address, age, email);
     }
 
 }
