@@ -25,6 +25,7 @@ public class UserBuilder {
 
     public static User toEntity(UserDetailsDTO userDetailsDTO) {
         return new User(
+                userDetailsDTO.getId(),
                 userDetailsDTO.getUsername(),
                 userDetailsDTO.getAddress(),
                 userDetailsDTO.getAge(),

@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Button, Card, CardHeader, Col, Modal, ModalBody, ModalHeader, Row } from 'reactstrap';
 
 import APIResponseErrorMessage from "../commons/errorhandling/api-response-error-message";
-import AddUserForm from "./components/add-user-form";
 import * as API_USERS from "./api/user-api";
 import UserTable from "./components/user-table";
 import EditUserForm from './components/edit-user-form';
-
+import { getUserRole } from "../commons/auth/jwt-utils";
 
 function UserContainer(props) {
     const [isSelected, setIsSelected] = useState(false);
@@ -14,9 +13,8 @@ function UserContainer(props) {
     const [isLoaded, setIsLoaded] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null)
 
-    // Store error status and message in the same object because we don't want 
-    // to render the component twice (using setError and setErrorStatus)
-    // This approach can be used for linked state variables.
+    const userRole = getUserRole();
+    const isAdmin = userRole === 'ADMIN';
     const [error, setError] = useState({ status: 0, errorMessage: null });
 
     // componentDidMount
@@ -35,14 +33,10 @@ function UserContainer(props) {
         });
     }
 
-    function toggleForm() {
-        setIsSelected((isSelected) => (!isSelected));
-    }
-
     function reload() {
         setIsLoaded(false);
         setSelectedUser(null);
-        toggleForm();
+        setIsSelected(false);
         fetchUsers();
     }
 
@@ -61,7 +55,9 @@ function UserContainer(props) {
                 <br />
                 <Row>
                     <Col sm={{ size: '8', offset: 1 }}>
-                        <Button color="primary" onClick={toggleForm}>Add User </Button>
+                        {/*{isAdmin && (*/}
+                        {/*    <Button color="primary" onClick={toggleForm}>Add User </Button>*/}
+                        {/*)}*/}
                     </Col>
                 </Row>
                 <br />
@@ -77,16 +73,12 @@ function UserContainer(props) {
                 </Row>
             </Card>
 
-            <Modal isOpen={isSelected} toggle={toggleForm} size="lg">
-                <ModalHeader toggle={toggleForm}>
-                    {selectedUser ? "Edit User" : "Add User"}
+            <Modal isOpen={isSelected} toggle={() => setIsSelected(false)} size="lg">
+                <ModalHeader toggle={() => setIsSelected(false)}>
+                    Edit User
                 </ModalHeader>
                 <ModalBody>
-                    {selectedUser ? (
-                        <EditUserForm reloadHandler={reload} user={selectedUser} />
-                    ) : (
-                        <AddUserForm reloadHandler={reload} />
-                    )}
+                    <EditUserForm reloadHandler={reload} user={selectedUser} />
                 </ModalBody>
             </Modal>
 

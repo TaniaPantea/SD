@@ -32,14 +32,18 @@ public class AuthUser implements Serializable{
     @Column(name = "email", nullable = false)
     private String email;
 
+    @Column(name = "role", nullable = false)
+    private String role;
+
 
     public AuthUser() {
     }
 
-    public AuthUser(String name, String password, String email) {
+    public AuthUser(String name, String password, String email, String role) {
         this.name = name;
         this.password = password;
         this.email = email;
+        this.role = role;
     }
 
     public UUID getId() {
@@ -62,15 +66,22 @@ public class AuthUser implements Serializable{
         return password;
     }
 
-    public void setPassword(String address) {
-        this.password = address;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String age) {
-        this.email = age;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getRole() {
+        return role;
+    }
+    public void setRole(String role) {
+        this.role = role;
     }
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import Table from "../../commons/tables/table";
 import * as API_DEVICES from "../api/device-api";
-
+import { getUserRole } from "../../commons/auth/jwt-utils";
 
 const filters = [
     {
@@ -10,6 +10,9 @@ const filters = [
 ];
 
 function DeviceTable(props) {
+
+    const userRole = getUserRole();
+    const isAdmin = userRole === 'ADMIN';
 
     function handleEdit(device) {
         API_DEVICES.getDeviceById({ id: device.id }, (result, status, err) => {
@@ -29,7 +32,7 @@ function DeviceTable(props) {
         if (window.confirm(`Are you sure you want to delete ${device.name}?`)) {
             API_DEVICES.deleteDevice(device.id, (result, status, err) => {
                 if (status === 200 || status === 204) {
-                    props.reloadHandler();
+                    props.reloadDelete();
                 } else {
                     alert("Error deleting device");
                 }
@@ -66,8 +69,13 @@ function DeviceTable(props) {
                 if (!device) return <div> Date lipsa </div>;
                 return (
                     <div>
-                        <button onClick={() => handleEdit(device)}>Edit</button>
-                        <button onClick={() => handleDelete(device)}>Delete</button>
+                        {isAdmin && (
+                            <>
+                                <button onClick={() => handleEdit(device)}>Edit</button>
+                                <button onClick={() => handleDelete(device)}>Delete</button>
+                            </>
+                        )}
+                        {!isAdmin && <span> - </span>}
                     </div>
                 );
             }

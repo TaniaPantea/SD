@@ -2,6 +2,8 @@ import React from 'react'
 import { DropdownItem, DropdownMenu, DropdownToggle, Nav, Navbar, NavbarBrand, NavLink, UncontrolledDropdown } from 'reactstrap';
 
 import logo from './commons/images/icon.png';
+import { useHistory } from 'react-router-dom'; // NOU: Importă useHistory
+import { logout, getUserRole } from './commons/auth/jwt-utils';
 
 const textStyle = {
     color: 'white',
@@ -9,6 +11,15 @@ const textStyle = {
 };
 
 function NavigationBar() {
+    const history = useHistory();
+    const role = getUserRole();
+    const isAuthenticated = !!role;
+
+    function handleLogout() {
+        logout();
+        history.push('/auth');
+    }
+
     return (
         <div>
             <Navbar color="dark" light expand="md">
@@ -34,6 +45,18 @@ function NavigationBar() {
                     </UncontrolledDropdown>
 
                 </Nav>
+                <Nav navbar>
+                    {isAuthenticated ? (
+                        <NavLink href="#" onClick={handleLogout} style={textStyle}>
+                            Logout ({role})
+                        </NavLink>
+                    ) : (
+                        <NavLink href="/auth" style={textStyle}>
+                            Login
+                        </NavLink>
+                    )}
+                </Nav>
+
             </Navbar>
         </div>
     );

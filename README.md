@@ -1,140 +1,83 @@
-# Demo — Spring Boot API
+# The SD Project: Microservices Application
 
-A simple Spring Boot REST API (people service) with PostgreSQL db associated. Includes a ready-to-use Postman collection for quick testing.
-
-## Contents
-
-## Project structure
-```
-demo/
-├── .mvn
-│   └── wrapper
-│       └── maven-wrapper.properties
-├── src
-│   ├── main
-│   │   ├── java
-│   │   │   └── com
-│   │   │       └── example
-│   │   │           └── demo
-│   │   │               ├── controllers
-│   │   │               │   └── PersonController.java
-│   │   │               ├── dtos
-│   │   │               │   ├── builders
-│   │   │               │   │   └── PersonBuilder.java
-│   │   │               │   ├── validators
-│   │   │               │   │   ├── annotation
-│   │   │               │   │   │   └── AgeLimit.java
-│   │   │               │   │   └── AgeValidator.java
-│   │   │               │   ├── PersonDetailsDTO.java
-│   │   │               │   └── PersonDTO.java
-│   │   │               ├── entities
-│   │   │               │   └── Person.java
-│   │   │               ├── handlers
-│   │   │               │   ├── exceptions
-│   │   │               │   │   └── model
-│   │   │               │   │       ├── CustomException.java
-│   │   │               │   │       ├── ExceptionHandlerResponseDTO.java
-│   │   │               │   │       └── ResourceNotFoundException.java
-│   │   │               │   └── RestExceptionHandler.java
-│   │   │               ├── repositories
-│   │   │               │   └── PersonRepository.java
-│   │   │               ├── services
-│   │   │               │   └── PersonService.java
-│   │   │               └── DemoApplication.java
-│   │   └── resources
-│   │       ├── static
-│   │       ├── templates
-│   │       └── application.properties
-│   └── test
-│       └── java
-│           └── com
-│               └── example
-│                   └── demo
-│                       └── DemoApplicationTests.java
-├── .gitattributes
-├── .gitignore
-├── HELP.md
-├── mvnw
-├── mvnw.cmd
-├── pom.xml
-└── postman_collection.json
-```
-
-- `src/main/...` — SpringBoot source
-- `src/main/resources/application.properties` — app configuration
-- `postman_collection.json` — Postman collection to import
-- `pom.xml` — Maven project wht Spring Boot 4.0.0-SNAPSHOT and Java 25
-
-## Prerequisites
-- **Java JDK 25**
-- **PostgreSQL** server accessible from the app (can be changed to any other db from application.properties)
-- **Postman** account to import & run the test collection
-
-## Database (PostgreSQL) — ( !!! Create it first !!!)
-The app expects a PostgreSQL database to already exist. Default connection values:
-```
-DB_IP=localhost
-DB_PORT=5432
-DB_USER=postgres
-DB_PASSWORD=root
-DB_DBNAME=example-db
-```
-
-> Note: Hibernate is set to `spring.jpa.hibernate.ddl-auto=update`, so tables will be created/updated automatically on first run
-
-## Configuration
-All important settings are in `src/main/resources/application.properties`. You can override them via environment variables:
-
-| Purpose | Property | Env var | Default |
-|---|---|---|---|
-| DB host | `database.ip` | `DB_IP` | `localhost` |
-| DB port | `database.port` | `DB_PORT` | `5432` |
-| DB user | `database.user` | `DB_USER` | `postgres` |
-| DB password | `database.password` | `DB_PASSWORD` | `root` |
-| DB name | `database.name` | `DB_DBNAME` | `example-db` |
-| HTTP port | `server.port` | `PORT` | `8080` |
-
-Effective JDBC URL:
-```
-jdbc:postgresql://${DB_IP}:${DB_PORT}/${DB_DBNAME}
-```
-
-## How to run (local)
-From the project root (`demo/`), run with the Maven Wrapper:
-
-```bash
-# 1) export env vars if you need non-defaults
-export DB_IP=localhost
-export DB_PORT=5432
-export DB_USER=postgres
-export DB_PASSWORD=root
-export DB_DBNAME=example-db
-export PORT=8080
-
-# 2) start the app
-./mvnw spring-boot:run
-```
-
-The app will start on: **http://localhost:8080** (unless you changed `PORT`).
-
-## API quick peek
-The included Postman collection targets the **people** resource defined by the **Person** entity.
-Examples once the app is running:
-- `GET /people` — list all
-- `POST /people` — create (body: JSON person)
-- `GET /people/{personId}` — fetch one
-- `PUT /people/{personId}` — update
-- `DELETE /people/{personId}` — delete
-
-## Test with Postman
-1. Create/sign in to your **Postman** account;
-2. **Import** the collection file: [`postman_collection.json`];
-3. In Postman, verify the collection variables so that you know everything is set up correctly:
-   - `baseUrl` → `http://localhost:8080`
-   - `resource` → `people`
-4. Run the requests in order (the collection includes a test that remembers `personId` after create) 
-
-## Where it runs
-By default the app binds to `PORT` (default **8080**) on your machine
+This is a web application designed to manage users and their devices efficiently. The project uses a **microservices architecture** to ensure security and scalability.
 
 ---
+
+##  Project Components
+
+The application is built from **three separate backend microservices** and a **React-based frontend**. Each service has a specific job:
+
+* **AuthMicroservice:** Handles **user authentication**, including registration, login, and **generating/validating JWT tokens**.
+* **UserMicroservice:** Manages **user profile data** (age, address, etc.) and performs CRUD operations (Create, Read, Update, Delete) on user profiles.
+* **DeviceMicroservice:** Manages **device inventory**, handling device creation, assignment, and ownership tracking.
+
+##  Security and Access
+
+Security is enforced through **JSON Web Tokens (JWT)** and **role-based access control**.
+
+* **Token Validation:** All requests must include a valid JWT token. Validation is handled by the **Traefik API Gateway**, which checks the token with the AuthMicroservice before forwarding the request.
+* **Role Protection:** The system defines two main roles:
+    * **Admin:** Has **full access (CRUD)** to all users and devices.
+    * **Client:** Can only **view devices assigned to them**.
+
+## 🔗 API Endpoints
+
+The API is structured across three microservices. All endpoints are prefixed with `/api` by the Traefik Gateway.
+
+###  1. AuthMicroservice (`/api/auth`)
+
+Handles identity management and token operations.
+
+| Method | Path | Description | Access |
+| :--- | :--- | :--- | :--- |
+| **POST** | `/auth/register` | Creates a new user identity and returns the generated `userId` for synchronization. | Public |
+| **POST** | `/auth/login` | Authenticates user credentials and returns a JWT `token`. | Public |
+| **GET** | `/auth/validate` | Checks the validity and status of the provided JWT token. | Protected |
+| **DELETE** | `/auth/{id}` | Deletes a user identity from the Auth system. | Protected |
+
+###  2. UserMicroservice (`/api/people`)
+
+Manages user profiles and extended details (synced from Auth backend).
+
+| Method | Path | Description | Access |
+| :--- | :--- | :--- | :--- |
+| **GET** | `/people` | Retrieves a list of all user profiles and details. | Protected |
+| **POST** | `/people` | Creates (synchronizes) a new user profile using a pre-generated ID (from Auth). | Public (for synchronization) |
+| **GET** | `/people/{id}` | Retrieves detailed information for a specific user ID. | Protected |
+| **PUT** | `/people/{id}` | Updates all profile details for a specific user ID. | Protected |
+| **DELETE** | `/people/{id}` | Deletes a user profile from the Users system. | Protected |
+
+###  3. DeviceMicroservice (`/api/devices`)
+
+Manages device inventory and user assignments.
+
+| Method | Path | Description | Access |
+| :--- | :--- | :--- | :--- |
+| **GET** | `/devices` | Retrieves a list of all devices in the system. | Protected |
+| **POST** | `/devices` | Creates a new device record and assigns it to a user. | Protected |
+| **GET** | `/devices/{id}` | Retrieves detailed information for a specific device ID. | Protected |
+| **PUT** | `/devices/{id}` | Updates device details (e.g., max consumption, owner). | Protected |
+| **DELETE** | `/devices/{id}` | Deletes a device from the inventory. | Protected |
+| **GET** | `/devices/by-name` | Finds devices matching a specific name query (`?name=...`). | Protected |
+| **GET** | `/devices/by-userId` | Finds devices assigned to a specific user ID (`?userId=...`). (Used by Clients). | Protected |
+
+---
+
+##  Getting Started
+
+The entire system is set up using **Docker Compose**.
+
+1.  **Launch:** Run `docker-compose up --build` in the project's root directory.
+2.  **Access:** The frontend is available at `http://localhost`.
+
+**Important:** An initial **Admin account** must be created in the database to start managing the system from the web interface.
+
+---
+
+##  Features at a Glance
+
+* **Secure Authentication:** Uses JWT for stateless authentication.
+* **Role-Based Access:** Restricts features based on user role (Admin or Client).
+* **Data Separation:** Microservices clearly separate identity (Auth) from resources (User/Device).
+* **CRUD Operations:** Full management capabilities for user profiles and devices.

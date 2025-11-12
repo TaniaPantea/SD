@@ -14,12 +14,13 @@ public class AuthBuilder {
     }
 
     public static RegisterDetailsDTO toRegisterDetailsDTO(AuthUser authUser) {
-        return new RegisterDetailsDTO(authUser.getId(), authUser.getName(), authUser.getPassword(), authUser.getEmail());
+        return new RegisterDetailsDTO(authUser.getId(), authUser.getName(), authUser.getPassword(), authUser.getEmail(), authUser.getRole());
     }
 
     public static AuthUser toEntity(RegisterDetailsDTO registerDetailsDTO) {
         return new AuthUser(registerDetailsDTO.getName(),
                 registerDetailsDTO.getPassword(),
-                registerDetailsDTO.getEmail());
+                registerDetailsDTO.getEmail(),
+                registerDetailsDTO.getRole());
     }
 }

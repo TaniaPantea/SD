@@ -55,6 +55,12 @@ function DeviceContainer(props) {
         fetchDevices();
     }
 
+    function reloadDelete(){
+        setIsLoaded(false);
+        setSelectedDevice(null);
+        fetchDevices();
+    }
+
     function openEditForm(device) {
         setSelectedDevice(device);
         setIsSelected(true);
@@ -80,6 +86,7 @@ function DeviceContainer(props) {
                                 tableData={tableData}
                                 openEditForm={openEditForm}
                                 reloadHandler={reload}
+                                reloadDelete={reloadDelete}
                                 users={users}
                             />}
                         {error.status > 0 &&

@@ -5,43 +5,48 @@ const endpoint = {
     device: '/api/devices'
 };
 
-const AUTH_HEADER = 'Basic ' + btoa("user:test");
+function authHeader() {
+    const token = localStorage.getItem('token');
+    return token ? { 'Authorization': 'Bearer ' + token } : {};
+}
 
 function getDevices(callback) {
-    let request = new Request(HOST.backend_api + endpoint.device, {
+    const request = new Request(HOST.backend_api + endpoint.device, {
         method: 'GET',
         headers: {
-            'Authorization': AUTH_HEADER,
+            ...authHeader(),
         }
     });
     RestApiClient.performRequest(request, callback);
 }
 
 function getDeviceById(params, callback) {
-    let request = new Request(HOST.backend_api + endpoint.device + "/" + params.id, {
+    const request = new Request(HOST.backend_api + endpoint.device + "/" + params.id, {
         method: 'GET',
         headers: {
-            'Authorization': AUTH_HEADER,
+            ...authHeader(),
         }
     });
     RestApiClient.performRequest(request, callback);
 }
 
 function deleteDevice(id, callback) {
-    let request = new Request(HOST.backend_api + endpoint.device + '/' + id, {
+    const request = new Request(HOST.backend_api + endpoint.device + '/' + id, {
         method: 'DELETE',
-        headers: { 'Authorization': AUTH_HEADER }
+        headers: {
+            ...authHeader(),
+        }
     });
     RestApiClient.performRequest(request, callback);
 }
 
 function postDevice(device, callback) {
-    let request = new Request(HOST.backend_api + endpoint.device, {
+    const request = new Request(HOST.backend_api + endpoint.device, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'Authorization': AUTH_HEADER
+            ...authHeader(),
         },
         body: JSON.stringify(device)
     });
@@ -49,12 +54,12 @@ function postDevice(device, callback) {
 }
 
 function putDevice(device, callback) {
-    let request = new Request(HOST.backend_api + endpoint.device + '/' + device.id, {
+    const request = new Request(HOST.backend_api + endpoint.device + '/' + device.id, {
         method: 'PUT',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'Authorization': AUTH_HEADER
+            ...authHeader(),
         },
         body: JSON.stringify(device)
     });

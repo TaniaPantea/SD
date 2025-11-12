@@ -11,11 +11,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/people")
+@RequestMapping("/auth")
 @Validated
 public class AuthController {
 
@@ -26,16 +28,39 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterDetailsDTO req) {
-        authService.register(req);
-        return ResponseEntity.ok("Utilizator creat cu succes!");
+    // MODIFICARE AICI: Schimbă tipul răspunsului pentru a suporta UUID (Map<String, Object>)
+    public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody RegisterDetailsDTO req) {
+
+        // MODIFICARE AICI: Apelăm metoda și primim entitatea (cu ID-ul generat)
+        AuthUser newUser = authService.register(req);
+
+        // Cream un Map care poate conține String și UUID
+        Map<String, Object> body = new HashMap<>();
+
+        // NOU: Includem ID-ul utilizatorului generat
+        body.put("userId", newUser.getId());
+        body.put("message", "User successfully registered");
+
+        return ResponseEntity.ok(body);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginDTO req) {
-        authService.login(req);
-        return ResponseEntity.ok("Autentificat cu succes!");
+    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody LoginDTO req) {
+        String token = authService.login(req);
+        Map<String, String> body = new HashMap<>();
+        body.put("token", token);
+        return ResponseEntity.ok(body);
     }
 
+    @GetMapping("/validate")
+    public ResponseEntity<String> validateToken() {
+        return ResponseEntity.ok("Token validated");
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
+        authService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 
 }

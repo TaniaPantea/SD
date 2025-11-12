@@ -7,6 +7,7 @@ import com.example.demo.dtos.builders.UserBuilder;
 import com.example.demo.entities.User;
 import com.example.demo.handlers.exceptions.model.ResourceNotFoundException;
 import com.example.demo.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,5 +71,22 @@ public class UserService {
         return UserBuilder.toPersonDetailsDTO(user);
     }
 
+    @Transactional
+    public UUID insertById(UserDetailsDTO personDTO) {
+
+        // Verificăm dacă DTO-ul are ID (trimis de frontend/Auth)
+        if (personDTO.getId() == null) {
+            // Dacă ID-ul lipsește, putem alege să generăm unul (sau să aruncăm o eroare)
+            // Lăsăm logica veche (presupunând că save/repository îl generează)
+        }
+
+        User user = UserBuilder.toEntity(personDTO);
+
+        // userRepository.save(user) va folosi ID-ul existent (dacă e setat pe 'user')
+        user = userRepository.save(user);
+
+        LOGGER.debug("User details with id {} were inserted/updated in db", user.getId());
+        return user.getId();
+    }
 
 }

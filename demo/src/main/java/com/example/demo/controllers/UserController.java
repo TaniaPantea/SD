@@ -29,20 +29,20 @@ public class UserController {
         return ResponseEntity.ok(userService.findPersons());
     }
 
-    @PostMapping
-    public ResponseEntity<UserDetailsDTO> create(@Valid @RequestBody UserDetailsDTO person) {
-        UUID id = userService.insert(person);
-
-        person.setId(id);
-
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(id)
-                .toUri();
-
-        return ResponseEntity.created(location).body(person);
-    }
+    //    @PostMapping
+    //    public ResponseEntity<UserDetailsDTO> create(@Valid @RequestBody UserDetailsDTO person) {
+    //        UUID id = userService.insert(person);
+    //
+    //        person.setId(id);
+    //
+    //        URI location = ServletUriComponentsBuilder
+    //                .fromCurrentRequest()
+    //                .path("/{id}")
+    //                .buildAndExpand(id)
+    //                .toUri();
+    //
+    //        return ResponseEntity.created(location).body(person);
+    //    }
 
 
     @GetMapping("/{id}")
@@ -63,4 +63,17 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
+    @PostMapping
+    public ResponseEntity<UserDetailsDTO> create(@Valid @RequestBody UserDetailsDTO person) {
+
+        UUID id = userService.insertById(person);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(id)
+                .toUri();
+
+        return ResponseEntity.created(location).body(person);
+    }
 }

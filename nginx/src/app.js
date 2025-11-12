@@ -7,6 +7,9 @@ import UserContainer from './user/user-container';
 import ErrorPage from './commons/errorhandling/error-page';
 import styles from './commons/styles/project-style.css';
 import DeviceContainer from './device/device-container';
+import LoginForm from "./auth/components/login-form";
+import AuthContainer from "./auth/auth-container";
+import PrivateRoute from "./commons/auth/private-route";
 
 /*
     Namings: https://reactjs.org/docs/jsx-in-depth.html#html-tags-vs.-react-components
@@ -26,16 +29,24 @@ function App() {
                             render={() => <Home />}
                         />
 
-                        <Route
+                        <PrivateRoute
                             exact
                             path='/user'
-                            render={() => <UserContainer />}
+                            component={UserContainer}
+                            allowedRoles={['ADMIN','CLIENT']}
+                        />
+
+                        <PrivateRoute
+                            exact
+                            path='/devices'
+                            component={DeviceContainer}
+                            allowedRoles={['ADMIN', 'CLIENT']}
                         />
 
                         <Route
                             exact
-                            path='/devices'
-                            render={() => <DeviceContainer />}
+                            path='/auth'
+                            render={() => <AuthContainer />}
                         />
 
                         {/*Error*/}
