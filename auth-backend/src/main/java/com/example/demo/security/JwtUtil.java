@@ -43,7 +43,7 @@ public class JwtUtil {
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .setSigningKey(SECRET_KEY)
-                .parseClaimsJws(token)  //semnatura coresp sau nu
+                .parseClaimsJws(token)  //semnatura coresp sau nu, adk daca s a modificat
                 .getBody(); //ia doar payload ul=datele
     }
 }

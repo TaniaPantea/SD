@@ -19,17 +19,14 @@ function RegisterForm({ onRegisterSuccess }) {
     function handleSubmit() {
         const userDetails = { name, email, password };
 
-        // Pasul 1: Înregistrare în backend-ul Auth
         API_AUTH.registerUser(userDetails, (authResult, authStatus, authErr) => {
-            if (authStatus === 200 && authResult.userId) { // Presupunem că backend-ul Auth returnează userId la succes
+            if (authStatus === 200 && authResult.userId) {
 
-                // NOU: Pasul 2: Sincronizare în backend-ul User/People
                 const newUserEntry = {
                     id: authResult.userId,
                     username: name,
                     email: email,
-                    // MODIFICARE AICI: Trimite valorile reale
-                    age: parseInt(age), // Convertește în număr, sau null dacă e gol
+                    age: parseInt(age),
                     address: address
                 };
                 console.log(newUserEntry);
@@ -38,10 +35,8 @@ function RegisterForm({ onRegisterSuccess }) {
                         localStorage.setItem('token', authResult.token);
                         API_USERS.postUser(newUserEntry, (userResult, userStatus, userErr) => {
                             if (userStatus === 200 || userStatus === 201) {
-                                // Sincronizare reușită în ambele backend-uri
                                 onRegisterSuccess();
                             } else {
-                                // Atenție: Aici utilizatorul există deja în Auth, dar nu în People!
                                 console.error("Failed to sync user data:", userErr);
                                 alert("Registration partially succeeded (Auth OK, User/People FAILED). Please contact admin.");
                                 setError(userErr || "Synchronization failed");
@@ -50,7 +45,6 @@ function RegisterForm({ onRegisterSuccess }) {
                     }
                 });
             } else {
-                // Eșec la înregistrarea Auth
                 setError(authErr || "Registration failed");
             }
         });

@@ -2,7 +2,7 @@ import React from 'react'
 import { DropdownItem, DropdownMenu, DropdownToggle, Nav, Navbar, NavbarBrand, NavLink, UncontrolledDropdown } from 'reactstrap';
 
 import logo from './commons/images/icon.png';
-import { useHistory } from 'react-router-dom'; // NOU: Importă useHistory
+import { useHistory } from 'react-router-dom';
 import { logout, getUserRole } from './commons/auth/jwt-utils';
 
 const textStyle = {

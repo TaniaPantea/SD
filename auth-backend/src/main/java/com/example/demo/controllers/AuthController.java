@@ -28,16 +28,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    // MODIFICARE AICI: Schimbă tipul răspunsului pentru a suporta UUID (Map<String, Object>)
     public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody RegisterDetailsDTO req) {
 
-        // MODIFICARE AICI: Apelăm metoda și primim entitatea (cu ID-ul generat)
         AuthUser newUser = authService.register(req);
 
-        // Cream un Map care poate conține String și UUID
         Map<String, Object> body = new HashMap<>();
 
-        // NOU: Includem ID-ul utilizatorului generat
         body.put("userId", newUser.getId());
         body.put("message", "User successfully registered");
 

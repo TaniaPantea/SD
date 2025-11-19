@@ -40,7 +40,6 @@ function EditUserForm({ user, reloadHandler }) {
     const [formIsValid, setFormIsValid] = useState(false);
     const [error, setError] = useState({ status: 0, errorMessage: null });
 
-    // Populam formul cu valorile userului la montare sau la schimbarea userului
     useEffect(() => {
         if (user) {
             setFormControls({
