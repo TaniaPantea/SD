@@ -66,7 +66,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserDetailsDTO> create(@Valid @RequestBody UserDetailsDTO person) {
 
-        UUID id = userService.insertById(person);
+        UUID id = userService.syncUser(person);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()

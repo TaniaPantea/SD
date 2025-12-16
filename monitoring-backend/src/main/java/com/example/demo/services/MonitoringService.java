@@ -1,0 +1,81 @@
+package com.example.demo.services;
+
+import com.example.demo.dtos.HourlyConsumptionDTO;
+import com.example.demo.dtos.MeasurementDTO;
+import com.example.demo.dtos.builders.HourlyConsumptionBuilder;
+import com.example.demo.entities.DeviceUserMap;
+import com.example.demo.entities.HourlyConsumption;
+import com.example.demo.repositories.DeviceUserMapRepository;
+import com.example.demo.repositories.HourlyConsumptionRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@Service
+public class MonitoringService {
+
+    private final HourlyConsumptionRepository hourlyConsumptionRepository;
+    private final DeviceUserMapRepository deviceUserMapRepository;
+
+    public MonitoringService(HourlyConsumptionRepository hourlyConsumptionRepository,
+                             DeviceUserMapRepository deviceUserMapRepository) {
+        this.hourlyConsumptionRepository = hourlyConsumptionRepository;
+        this.deviceUserMapRepository = deviceUserMapRepository;
+    }
+
+    // UPDATE/INSERT a.i. nimeni altcineva să nu intervina, sa nu se faca modificari deodata
+    @Transactional
+    public void processMeasurement(MeasurementDTO measurementDTO) {
+        UUID deviceId = measurementDTO.getDeviceId();
+        Double measurementValue = measurementDTO.getMeasurementValue();
+
+        LocalDateTime measurementTime = measurementDTO.getTimestamp();
+
+        //de ex 10:00:00
+        LocalDateTime hourKey = measurementTime.truncatedTo(ChronoUnit.HOURS);
+
+        Optional<HourlyConsumption> existingRecord =
+                hourlyConsumptionRepository.findByDeviceIdAndHourTimestamp(deviceId, hourKey);
+
+        HourlyConsumption recordToSave;
+
+        if (existingRecord.isPresent()) {
+            recordToSave = existingRecord.get();
+            Double newTotal = recordToSave.getTotalConsumption() + measurementValue;
+            recordToSave.setTotalConsumption(newTotal);
+
+        } else {
+            recordToSave = new HourlyConsumption();
+            recordToSave.setDeviceId(deviceId);
+            recordToSave.setHourTimestamp(hourKey);
+            recordToSave.setTotalConsumption(measurementValue);
+        }
+
+        hourlyConsumptionRepository.save(recordToSave);
+    }
+
+    public List<HourlyConsumptionDTO> findConsumptionByDeviceId(UUID deviceId) {
+        List<HourlyConsumption> consumptionList =
+                hourlyConsumptionRepository.findByDeviceIdOrderByHourTimestampAsc(deviceId);
+
+        return consumptionList.stream()
+                .map(HourlyConsumptionBuilder::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<UUID> findDevicesByUserId(UUID userId) {
+
+        List<DeviceUserMap> mappings = deviceUserMapRepository.findByUserId(userId);
+
+        return mappings.stream()
+                .map(DeviceUserMap::getDeviceId)
+                .collect(Collectors.toList());
+    }
+}

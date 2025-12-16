@@ -22,7 +22,7 @@ function Table(props) {
             if (String(val.value) === "") {
                 accepted = true;
             }
-
+            //val este filtrul
             if (!String(data[val.accessor]).includes(String(val.value)) && !String(val.value).includes(String(data[val.accessor]))) {
                 accepted = false;
             }
@@ -66,16 +66,16 @@ function Table(props) {
         <div>
             <Row>
                 {
-                    search.map((header, index) => {
-                        return (
-                            <Col key={index}>
-                                <div >
-                                    <Field id={header.accessor} label={header.accessor}
-                                        onChange={(e) => handleChange(e, index, header.accessor)} />
-                                </div>
-                            </Col>
-                        )
-                    })
+                    // search.map((header, index) => {
+                    //     return (
+                    //         <Col key={index}>
+                    //             <div >
+                    //                 <Field id={header.accessor} label={header.accessor}
+                    //                     onChange={(e) => handleChange(e, index, header.accessor)} />
+                    //             </div>
+                    //         </Col>
+                    //     )
+                    // })
                 }
             </Row>
             <Row>

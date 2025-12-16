@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Component  //ca sa fie bean
 public class JwtUtil {
@@ -17,9 +18,10 @@ public class JwtUtil {
     @Value("${jwt.expiration}")
     private long EXPIRATION_TIME;
 
-    public String generateToken(String email, String role) {
+    public String generateToken(UUID userId, String email, String role) {
         return Jwts.builder()
                 .setSubject(email)
+                .claim("userId", userId.toString())
                 .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
@@ -46,4 +48,5 @@ public class JwtUtil {
                 .parseClaimsJws(token)  //semnatura coresp sau nu, adk daca s a modificat
                 .getBody(); //ia doar payload ul=datele
     }
+
 }

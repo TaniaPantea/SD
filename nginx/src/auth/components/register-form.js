@@ -17,37 +17,29 @@ function RegisterForm({ onRegisterSuccess }) {
 
 
     function handleSubmit() {
-        const userDetails = { name, email, password };
+        // MODIFICAT: Trimitem toate detaliile, inclusiv Address și Age
+        const userDetails = { name, email, password, age: parseInt(age), address };
 
         API_AUTH.registerUser(userDetails, (authResult, authStatus, authErr) => {
             if (authStatus === 200 && authResult.userId) {
 
-                const newUserEntry = {
-                    id: authResult.userId,
-                    username: name,
-                    email: email,
-                    age: parseInt(age),
-                    address: address
-                };
-                console.log(newUserEntry);
+
                 API_AUTH.loginUser({email: userDetails.email, password: userDetails.password}, (authResult, authStatus, authErr) => {
                     if (authStatus === 200) {
                         localStorage.setItem('token', authResult.token);
-                        API_USERS.postUser(newUserEntry, (userResult, userStatus, userErr) => {
-                            if (userStatus === 200 || userStatus === 201) {
-                                onRegisterSuccess();
-                            } else {
-                                console.error("Failed to sync user data:", userErr);
-                                alert("Registration partially succeeded (Auth OK, User/People FAILED). Please contact admin.");
-                                setError(userErr || "Synchronization failed");
-                            }
-                        });
+
+                        onRegisterSuccess();
+
+                    } else {
+                        setError(authErr || "Registration succeeded, but auto-login failed.");
                     }
                 });
+
             } else {
                 setError(authErr || "Registration failed");
             }
         });
+
     }
 
     return (

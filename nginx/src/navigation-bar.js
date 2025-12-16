@@ -40,6 +40,9 @@ function NavigationBar() {
                             <DropdownItem>
                                 <NavLink href="/devices">Devices</NavLink>
                             </DropdownItem>
+                            <DropdownItem>
+                                <NavLink href="/monitoring">Monitoring</NavLink>
+                            </DropdownItem>
                         </DropdownMenu>
 
                     </UncontrolledDropdown>

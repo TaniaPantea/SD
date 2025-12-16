@@ -12,6 +12,12 @@ function getUserFromToken() {
         return null;
     }
 }
+function getUserId() {
+    const user = getUserFromToken();
+    if (!user) return null;
+
+    return user.userId || null;
+}
 
 function getUserRole() {
     const user = getUserFromToken();
@@ -32,4 +38,4 @@ function logout() {
     console.log("User logged out.");
 }
 
-export { getUserFromToken, getUserRole, isTokenExpired, logout };
+export { getUserFromToken, getUserRole, isTokenExpired, logout, getUserId };

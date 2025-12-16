@@ -3,6 +3,7 @@ package com.example.demo.dtos.builders;
 import com.example.demo.dtos.LoginDTO;
 import com.example.demo.dtos.RegisterDetailsDTO;
 import com.example.demo.entities.AuthUser;
+import com.example.demo.entities.UserDetails;
 
 public class AuthBuilder {
 
@@ -13,14 +14,17 @@ public class AuthBuilder {
         return new LoginDTO(authUser.getId(), authUser.getName(), authUser.getEmail());
     }
 
-    public static RegisterDetailsDTO toRegisterDetailsDTO(AuthUser authUser) {
-        return new RegisterDetailsDTO(authUser.getId(), authUser.getName(), authUser.getPassword(), authUser.getEmail(), authUser.getRole());
-    }
-
     public static AuthUser toEntity(RegisterDetailsDTO registerDetailsDTO) {
-        return new AuthUser(registerDetailsDTO.getName(),
+        AuthUser authUser = new AuthUser(registerDetailsDTO.getName(),
                 registerDetailsDTO.getPassword(),
                 registerDetailsDTO.getEmail(),
                 registerDetailsDTO.getRole());
+
+        UserDetails userDetails = new UserDetails(registerDetailsDTO.getAddress(),
+                registerDetailsDTO.getAge());
+
+        authUser.setUserDetails(userDetails);
+
+        return authUser;
     }
 }

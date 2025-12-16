@@ -1,25 +1,16 @@
 package com.example.demo.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.type.SqlTypes;
-
-
 import java.io.Serializable;
 import java.util.UUID;
 
 @Entity
-public class AuthUser implements Serializable{
-
-    private static final long serialVersionUID = 1L;
+public class AuthUser implements Serializable {
 
     @Id
-    @GeneratedValue
-    @UuidGenerator
+    @GeneratedValue(strategy = GenerationType.UUID)
     @JdbcTypeCode(SqlTypes.UUID)
     private UUID id;
 
@@ -29,12 +20,15 @@ public class AuthUser implements Serializable{
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(name = "role", nullable = false)
     private String role;
 
+    // mappedBy: maparea este pe campul 'authUser' din UserDetails.
+    @OneToOne(mappedBy = "authUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private UserDetails userDetails;
 
     public AuthUser() {
     }
@@ -46,12 +40,16 @@ public class AuthUser implements Serializable{
         this.role = role;
     }
 
-    public UUID getId() {
-        return id;
+    //legatura bidirectionala
+    public void setUserDetails(UserDetails userDetails) {
+        this.userDetails = userDetails;
+        if (userDetails != null) {
+            userDetails.setAuthUser(this);
+        }
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public UUID getId() {
+        return id;
     }
 
     public String getName() {
@@ -81,7 +79,12 @@ public class AuthUser implements Serializable{
     public String getRole() {
         return role;
     }
+
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public UserDetails getUserDetails() {
+        return userDetails;
     }
 }

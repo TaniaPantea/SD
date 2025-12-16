@@ -66,10 +66,27 @@ function putDevice(device, callback) {
     RestApiClient.performRequest(request, callback);
 }
 
+function getActiveDevicesByUserId(userId, callback) {
+    if (!userId) {
+        console.error("User ID is required to fetch devices.");
+        return;
+    }
+    const url = HOST.backend_api + endpoint.device + "/by-userId?userId=" + userId;
+    const request = new Request(url, {
+        method: 'GET',
+        headers: {
+            ...authHeader(),
+        }
+    });
+    console.log(`Fetching active devices for User ID: ${userId} from ${url}`);
+    RestApiClient.performRequest(request, callback);
+}
+
 export {
     getDevices,
     getDeviceById,
     postDevice,
     putDevice,
-    deleteDevice
+    deleteDevice,
+    getActiveDevicesByUserId
 };

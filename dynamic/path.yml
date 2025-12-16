@@ -33,6 +33,15 @@ http:
         - strip-api-prefix # Remove /api prefix before forwarding
       service: api-auth
 
+    monitoring-api:
+      rule: "Host(`localhost`) && PathPrefix(`/api/monitoring`)"
+      entryPoints:
+        - web
+      middlewares:
+        - auth-jwt 
+        - strip-api-prefix
+      service: api-monitoring
+
   middlewares:
     strip-api-prefix: # Middleware to remove /api prefix
       stripPrefix:
@@ -69,4 +78,9 @@ http:
       loadBalancer:
         servers:
           - url: "http://spring-auth:8080" # Container name solved by Docker DNS
+
+    api-monitoring:
+      loadBalancer:
+        servers:
+          - url: "http://spring-monitoring:8080" 
 

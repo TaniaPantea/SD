@@ -16,7 +16,7 @@
     "react-router-dom": "^5.3.4",
     "react-scripts": "5.0.1",
     "react-table": "^6.10.0",
-    "reactstrap": "^7.0.2",
+    "reactstrap": "^9.2.2",
     "recharts": "latest"
   },
   "scripts": {

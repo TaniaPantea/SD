@@ -13,9 +13,10 @@ function DeviceContainer(props) {
     const [isSelected, setIsSelected] = useState(false);
     const [tableData, setTableData] = useState([]);
     const [users, setUsers] = useState([]); // lista de users pentru dropdown
-    const [isLoaded, setIsLoaded] = useState(false);
     const [selectedDevice, setSelectedDevice] = useState(null);
     const [error, setError] = useState({ status: 0, errorMessage: null });
+    const [isDevicesLoaded, setIsDevicesLoaded] = useState(false);
+    const [isUsersLoaded, setIsUsersLoaded] = useState(false);
 
     // componentDidMount
     useEffect(() => {
@@ -27,7 +28,7 @@ function DeviceContainer(props) {
         API_DEVICES.getDevices((result, status, err) => {
             if (result !== null && status === 200) {
                 setTableData(result);
-                setIsLoaded(true);
+                setIsDevicesLoaded(true);
             } else {
                 setError({ status, errorMessage: err });
             }
@@ -38,6 +39,7 @@ function DeviceContainer(props) {
         API_USERS.getUsers((result, status, err) => {
             if (result !== null && status === 200) {
                 setUsers(result);
+                setIsUsersLoaded(true);
             } else {
                 console.error("Error fetching users for DeviceContainer", err);
             }
@@ -49,16 +51,19 @@ function DeviceContainer(props) {
     }
 
     function reload() {
-        setIsLoaded(false);
+        setIsDevicesLoaded(false);
+        setIsUsersLoaded(false);
         setSelectedDevice(null);
         toggleForm();
         fetchDevices();
     }
 
     function reloadDelete(){
-        setIsLoaded(false);
+        setIsDevicesLoaded(false);
+        setIsUsersLoaded(false);
         setSelectedDevice(null);
         fetchDevices();
+        fetchUsers();
     }
 
     function openEditForm(device) {
@@ -81,7 +86,7 @@ function DeviceContainer(props) {
                 <br />
                 <Row>
                     <Col sm={{ size: '10', offset: 1 }}>
-                        {isLoaded &&
+                        {(isDevicesLoaded && isUsersLoaded) &&
                             <DeviceTable
                                 tableData={tableData}
                                 openEditForm={openEditForm}

@@ -10,6 +10,7 @@ import DeviceContainer from './device/device-container';
 import LoginForm from "./auth/components/login-form";
 import AuthContainer from "./auth/auth-container";
 import PrivateRoute from "./commons/auth/private-route";
+import MonitoringContainer from "./monitoring/monitoring-container";
 
 /*
     Namings: https://reactjs.org/docs/jsx-in-depth.html#html-tags-vs.-react-components
@@ -47,6 +48,13 @@ function App() {
                             exact
                             path='/auth'
                             render={() => <AuthContainer />}
+                        />
+
+                        <PrivateRoute
+                            exact
+                            path='/monitoring'
+                            component={MonitoringContainer}
+                            allowedRoles={['ADMIN', 'CLIENT']}
                         />
 
                         {/*Error*/}
