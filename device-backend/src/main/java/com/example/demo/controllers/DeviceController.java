@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 import com.example.demo.dtos.DeviceDTO;
 import com.example.demo.dtos.DeviceDetailsDTO;
+import com.example.demo.entities.Device;
 import com.example.demo.services.DeviceService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/devices")
@@ -69,5 +71,11 @@ public class DeviceController {
         List<DeviceDetailsDTO> device = deviceService.findActiveDevicesByUserId(userId);
         return ResponseEntity.ok(device);
     }
+
+    @GetMapping("/active-ids")
+    public List<UUID> getAllActiveDeviceIds() {
+        return deviceService.findAllActiveDeviceIds();
+    }
+
 
 }

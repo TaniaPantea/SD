@@ -23,11 +23,10 @@ public class UserSyncBuilder {
         return new UserSyncDTO(
                 authUser.getId(),
                 eventType,
-                authUser.getName(),
                 authUser.getEmail(),
+                address,
                 age,
-                address
-
+                authUser.getName()
         );
     }
 }

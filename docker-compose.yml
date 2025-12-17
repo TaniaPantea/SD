@@ -67,6 +67,7 @@ services:
     restart: always
     ports:
       - "5672:5672"   # Standard AMQP
+      - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
@@ -119,6 +120,7 @@ services:
       - DB_PASSWORD=root
       - RABBITMQ_HOST=rabbitmq # Hostname is the service name
       - RABBITMQ_PORT=5672
+      - TZ=Europe/Bucharest
     networks:
       my_net:
     #se asigura ca nu incepe monitorizarea fara db si rabbitmq
@@ -144,6 +146,9 @@ services:
       - DB_PASSWORD=root
     networks:
       my_net:
+    depends_on:
+      - rabbitmq
+    command: /bin/sh -c "echo 'Waiting for RabbitMQ to start...'; sleep 20 && exec java -jar /demo/demo.jar"
 
   spring-device:
     build:
@@ -160,6 +165,9 @@ services:
       - DB_PASSWORD=root
     networks:
       my_net:
+    depends_on:
+      - rabbitmq
+    command: /bin/sh -c "echo 'Waiting for RabbitMQ to start...'; sleep 20 && exec java -jar /demo/demo.jar"
 
   spring-auth:
     build:
@@ -176,6 +184,9 @@ services:
       - DB_PASSWORD=root
     networks:
       my_net:
+    depends_on:
+      - rabbitmq
+    command: /bin/sh -c "echo 'Waiting for RabbitMQ to start...'; sleep 20 && exec java -jar /demo/demo.jar"
 
 
 volumes:

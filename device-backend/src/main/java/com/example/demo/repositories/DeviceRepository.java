@@ -16,6 +16,8 @@ public interface DeviceRepository extends JpaRepository<Device, UUID> {
      */
     List<Device> findByName(String name);
 
+    List<Device> findByActiveTrue();
+
     /**
      * Example: Custom query
      */

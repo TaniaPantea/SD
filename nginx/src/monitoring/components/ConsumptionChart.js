@@ -1,38 +1,61 @@
-import React from 'react';
-import { Card, CardBody, CardHeader } from 'reactstrap';
+import React, { useState } from 'react';
+import { Card, CardBody, CardHeader, ButtonGroup, Button } from 'reactstrap';
+import {
+    LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
+} from 'recharts';
 
-// Presupunem ca primeste un obiect din lista monitoringData
 function ConsumptionChart({ data }) {
-    const { deviceName, totalConsumption, hourlyData } = data;
+    const [chartType, setChartType] = useState('bar');
+    const { deviceName, hourlyData } = data;
 
-    if (!hourlyData || hourlyData.length === 0) {
-        return (
-            <Card className="mb-4">
-                <CardHeader className="bg-warning text-white">
-                    <strong>Device: {deviceName}</strong> (Total: {totalConsumption.toFixed(2)} kWh)
-                </CardHeader>
-                <CardBody>
-                    <p>No hourly data recorded yet for this device.</p>
-                </CardBody>
-            </Card>
-        );
-    }
+    //OX: ora, OY: val
+    const chartData = hourlyData.map(item => ({
+        hour: new Date(item.hourTimestamp).getHours() + ":00",
+        consumption: item.totalConsumption
+    })).sort((a, b) => parseInt(a.hour) - parseInt(b.hour));
+    //parseInt ia doar ce e inainte de : ex 13:00
 
-    // Afișare simplă în listă (aici ar veni logica de grafic real)
     return (
-        <Card className="mb-4">
-            <CardHeader className="bg-primary text-white">
-                <strong>Device: {deviceName}</strong> (Total: {totalConsumption.toFixed(2)} kWh)
+        <Card className="mb-4 shadow-sm">
+            <CardHeader className="bg-white d-flex justify-content-between align-items-center">
+                <strong>Device: {deviceName}</strong>
+                <ButtonGroup size="sm">
+                    <Button
+                        color="primary"
+                        outline
+                        onClick={() => setChartType('bar')}
+                        active={chartType === 'bar'}
+                    >Bar</Button>
+                    <Button
+                        color="primary"
+                        outline
+                        onClick={() => setChartType('line')}
+                        active={chartType === 'line'}
+                    >Line</Button>
+                </ButtonGroup>
             </CardHeader>
             <CardBody>
-                <h6>Hourly Data Points:</h6>
-                <ul style={{ listStyleType: 'none', paddingLeft: 0 }}>
-                    {hourlyData.map((item, index) => (
-                        <li key={index} className="mb-1">
-                            Time: <strong>{new Date(item.hourTimestamp).toLocaleString()}</strong> - Value: **{item.totalConsumption.toFixed(3)} kWh**
-                        </li>
-                    ))}
-                </ul>
+                <div style={{ width: '100%', height: 300 }}>
+                    <ResponsiveContainer>
+                        {chartType === 'bar' ? (
+                            <BarChart data={chartData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="hour" label={{ value: 'Hours', position: 'insideBottom', offset: -5 }} />
+                                <YAxis label={{ value: 'kWh', angle: -90, position: 'insideLeft' }} />
+                                <Tooltip />
+                                <Bar dataKey="consumption" fill="#8884d8" />
+                            </BarChart>
+                        ) : (
+                            <LineChart data={chartData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="hour" />
+                                <YAxis />
+                                <Tooltip />
+                                <Line type="monotone" dataKey="consumption" stroke="#82ca9d" strokeWidth={2} />
+                            </LineChart>
+                        )}
+                    </ResponsiveContainer>
+                </div>
             </CardBody>
         </Card>
     );

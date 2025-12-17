@@ -32,9 +32,9 @@ public class UserSyncListener {
             UserDetailsDTO userDetailsDTO = new UserDetailsDTO(
                     syncDTO.getUserId(),
                     syncDTO.getName(),
-                    syncDTO.getEmail(),
+                    syncDTO.getAddress(),
                     syncDTO.getAge(),
-                    syncDTO.getAddress()
+                    syncDTO.getEmail()
             );
 
             // Folosim metoda de upsert care va salva toate detaliile complete

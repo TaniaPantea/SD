@@ -43,6 +43,14 @@ public class DeviceService {
                 .collect(Collectors.toList());
     }
 
+    public List<UUID> findAllActiveDeviceIds() {
+        return deviceRepository.findByActiveTrue()
+                .stream()
+                .map(Device::getId)
+                .collect(Collectors.toList());
+    }
+
+
     public DeviceDetailsDTO findDeviceById(UUID id) {
         Optional<Device> prosumerOptional = deviceRepository.findById(id);
         if (!prosumerOptional.isPresent()) {
