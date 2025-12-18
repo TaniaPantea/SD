@@ -17,7 +17,7 @@ public class DeviceUserMap implements Serializable {
 
     @Id
     private UUID deviceId;
-
+    private String deviceName;
     private UUID userId;
 
 }

@@ -12,7 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class UserSyncDTO implements Serializable {
     private UUID userId;
-    private String eventType; // Ex: USER_CREATED, USER_UPDATED, USER_DELETED
+    private String eventType; // Ex: USER_CREATED, USER_DELETED
     private String email;
     private String address;
     private Integer age;

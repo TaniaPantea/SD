@@ -28,7 +28,6 @@ public class UserSyncListener {
 
         if ("USER_CREATED".equals(syncDTO.getEventType())) {
 
-            // Construim DTO-ul de detalii folosind toate câmpurile primite din eveniment
             UserDetailsDTO userDetailsDTO = new UserDetailsDTO(
                     syncDTO.getUserId(),
                     syncDTO.getName(),
@@ -37,7 +36,6 @@ public class UserSyncListener {
                     syncDTO.getEmail()
             );
 
-            // Folosim metoda de upsert care va salva toate detaliile complete
             userService.syncUser(userDetailsDTO);
 
             LOGGER.info("User {} synchronized successfully.", syncDTO.getUserId());

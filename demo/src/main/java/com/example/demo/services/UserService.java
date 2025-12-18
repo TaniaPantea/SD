@@ -112,7 +112,6 @@ public class UserService {
     }
 
     private void publishUserSyncedEvent(User user) {
-        // Device-Backend are nevoie doar de ID-ul utilizatorului.
         UserSyncDTO syncEvent = new UserSyncDTO();
         syncEvent.setUserId(user.getId());
         syncEvent.setName(user.getUsername());

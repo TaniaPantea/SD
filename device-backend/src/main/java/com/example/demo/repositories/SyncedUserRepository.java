@@ -9,7 +9,4 @@ import java.util.UUID;
 @Repository
 public interface SyncedUserRepository extends JpaRepository<SyncedUser, UUID> {
 
-    /**
-     *(UUID) este ID-ul utilizatorului din Auth.
-     */
 }

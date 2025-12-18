@@ -14,6 +14,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -97,6 +98,19 @@ public class DeviceService {
         publishDeviceSyncEvent(device, "DEVICE_DELETED");
     }
 
+    @Transactional
+    public void deleteDevicesByUserId(UUID userId) {
+        List<Device> devicesToDelete = deviceRepository.findByUserId(userId);
+
+        deviceRepository.deleteByUserId(userId);
+
+        for (Device device : devicesToDelete) {
+            publishDeviceSyncEvent(device, "DEVICE_DELETED");
+        }
+
+        LOGGER.info("All devices for User ID {} have been deleted.", userId);
+    }
+
 
     public List<DeviceDetailsDTO> findByName(String name) {
         return deviceRepository.findByName(name)
@@ -116,6 +130,7 @@ public class DeviceService {
 
         DeviceSyncDTO syncEvent = new DeviceSyncDTO(
                 device.getId(),
+                device.getName(),
                 userId,
                 eventType
         );

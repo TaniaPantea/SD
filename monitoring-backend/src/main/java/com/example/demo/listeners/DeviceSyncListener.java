@@ -32,6 +32,7 @@ public class DeviceSyncListener {
             DeviceUserMap mapping = new DeviceUserMap();
             mapping.setDeviceId(syncDTO.getDeviceId());
             mapping.setUserId(syncDTO.getUserId());
+            mapping.setDeviceName(syncDTO.getDeviceName());
             repository.save(mapping);
             LOGGER.info("Device ID {} mapped to User ID {}.", syncDTO.getDeviceId(), syncDTO.getUserId());
         }

@@ -26,7 +26,7 @@ public class AuthUser implements Serializable {
     @Column(name = "role", nullable = false)
     private String role;
 
-    // mappedBy: maparea este pe campul 'authUser' din UserDetails.
+    // mappedBy= maparea este pe campul 'authUser' din UserDetails.
     @OneToOne(mappedBy = "authUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private UserDetails userDetails;
 

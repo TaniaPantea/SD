@@ -70,12 +70,7 @@ public class MonitoringService {
                 .collect(Collectors.toList());
     }
 
-    public List<UUID> findDevicesByUserId(UUID userId) {
-
-        List<DeviceUserMap> mappings = deviceUserMapRepository.findByUserId(userId);
-
-        return mappings.stream()
-                .map(DeviceUserMap::getDeviceId)
-                .collect(Collectors.toList());
+    public List<DeviceUserMap> findDeviceMappingsByUserId(UUID userId) {
+        return deviceUserMapRepository.findByUserId(userId);
     }
 }

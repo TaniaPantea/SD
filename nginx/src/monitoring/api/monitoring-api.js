@@ -20,6 +20,16 @@ function getHourlyConsumption(deviceId, callback) {
     RestClient.performRequest(request, callback);
 }
 
+function getDevicesFromMonitoring(userId, callback) {
+    let request = new Request(HOST.backend_api + monitoring_path + "/user/" + userId, {
+        method: 'GET',
+        headers: {
+            ...authHeader(),
+        }
+    });
+    RestClient.performRequest(request, callback);
+}
+
 export {
-    getHourlyConsumption
+    getHourlyConsumption, getDevicesFromMonitoring
 };

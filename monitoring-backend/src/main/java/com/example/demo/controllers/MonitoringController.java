@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import com.example.demo.dtos.HourlyConsumptionDTO;
+import com.example.demo.entities.DeviceUserMap;
 import com.example.demo.services.MonitoringService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,12 @@ public class MonitoringController {
         List<HourlyConsumptionDTO> consumptionData = monitoringService.findConsumptionByDeviceId(deviceId);
 
         return ResponseEntity.ok(consumptionData);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<DeviceUserMap>> getDevicesByUserId(@PathVariable UUID userId) {
+        List<DeviceUserMap> mappings = monitoringService.findDeviceMappingsByUserId(userId);
+        return ResponseEntity.ok(mappings);
     }
 
 }

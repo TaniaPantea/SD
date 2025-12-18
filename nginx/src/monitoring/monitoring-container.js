@@ -22,14 +22,16 @@ function MonitoringContainer() {
 
     function fetchDevicesAndConsumption() {
         setLoading(true);
-        deviceApi.getActiveDevicesByUserId(userId, (devices, status, err) => {
-            if (devices !== null && status === 200) {
-                const fetchPromises = devices.map(device => {
+
+        monitoringApi.getDevicesFromMonitoring(userId, (mappings, status, err) => {
+            if (mappings !== null && status === 200) {
+
+                const fetchPromises = mappings.map(mapping => {
                     return new Promise(resolve => {
-                        monitoringApi.getHourlyConsumption(device.id, (consumptionResult, status) => {
+                        monitoringApi.getHourlyConsumption(mapping.deviceId, (consumptionResult, status) => {
                             let aggregatedData = {
-                                deviceId: device.id,
-                                deviceName: device.name,
+                                deviceId: mapping.deviceId,
+                                deviceName: mapping.deviceName || "Unknown Device",
                                 hourlyData: []
                             };
 
@@ -50,7 +52,7 @@ function MonitoringContainer() {
                 });
             } else {
                 setLoading(false);
-                setError({ status, errorMessage: err });
+                if (status !== 404) setError({ status, errorMessage: err });
             }
         });
     }

@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.transaction.annotation.Transactional;
+
 
 public interface DeviceRepository extends JpaRepository<Device, UUID> {
 
@@ -17,6 +19,11 @@ public interface DeviceRepository extends JpaRepository<Device, UUID> {
     List<Device> findByName(String name);
 
     List<Device> findByActiveTrue();
+
+    List<Device> findByUserId(UUID userId);
+
+    @Transactional
+    void deleteByUserId(UUID userId);
 
     /**
      * Example: Custom query

@@ -66,7 +66,7 @@ services:
     container_name: rabbitmq
     restart: always
     ports:
-      - "5672:5672"   # Standard AMQP
+      - "5672:5672"  
       - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
@@ -74,14 +74,14 @@ services:
       - my_net
     
 
-  nginx: # Numele acesta ("nginx") trebuie să corespundă cu ce ai pus în path.yml
+  nginx: 
     build:
       context: ./nginx # Calea către folderul cu Dockerfile-ul frontend-ului
       dockerfile: Dockerfile
     container_name: nginx-frontend
     restart: unless-stopped
     networks:
-      - my_net # Trebuie să fie în aceeași rețea
+      - my_net
 
 
   traefik:
@@ -104,7 +104,6 @@ services:
     networks:
       - my_net
 
-  #consumer
   spring-monitoring:
     build:
       context: ./monitoring-backend 
@@ -118,12 +117,11 @@ services:
       - DB_DBNAME=monitoring-db
       - DB_USER=postgres
       - DB_PASSWORD=root
-      - RABBITMQ_HOST=rabbitmq # Hostname is the service name
+      - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
       - TZ=Europe/Bucharest
     networks:
       my_net:
-    #se asigura ca nu incepe monitorizarea fara db si rabbitmq
     depends_on:
       - db-monitoring
       - rabbitmq

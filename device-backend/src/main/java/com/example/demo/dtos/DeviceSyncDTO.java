@@ -12,6 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class DeviceSyncDTO implements Serializable {
     private UUID deviceId;
+    private String deviceName;
     private UUID userId;
-    private String eventType; // DEVICE_CREATED, DEVICE_UPDATED, DEVICE_DELETED
+    private String eventType; // DEVICE_CREATED, DEVICE_DELETED
 }

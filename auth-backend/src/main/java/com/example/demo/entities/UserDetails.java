@@ -16,7 +16,7 @@ public class UserDetails implements Serializable {
     private UUID id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @MapsId //ID foreign key ca primary key
+    @MapsId
     private AuthUser authUser;
 
     @Column(name = "address")
