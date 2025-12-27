@@ -43,7 +43,7 @@ public class RabbitMQConfig {
         return BindingBuilder
                 .bind(userSyncDeviceQueue())
                 .to(synchronizationExchange())
-                .with("user.synced")
+                .with("user2.#")
                 .noargs();
     }
 

@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -28,6 +29,7 @@ public class UserSyncListener {
     private static final String USER_SYNC_DEVICE_QUEUE = "user-sync-device-queue";
 
     @RabbitListener(queues = {USER_SYNC_DEVICE_QUEUE})
+    @Transactional
     public void handleUserSynchronization(UserSyncDTO syncDTO) {
         LOGGER.info("Received user sync event: Type={}, ID={}", syncDTO.getEventType(), syncDTO.getUserId());
 
@@ -36,15 +38,16 @@ public class UserSyncListener {
 
                 SyncedUser user = new SyncedUser(syncDTO.getUserId(), syncDTO.getName());
 
-                UUID userId = syncDTO.getUserId();
-                deviceService.deleteDevicesByUserId(userId);
-
                 userRepository.save(user);
 
                 LOGGER.info("User ID {} synchronized in Device-Backend.", syncDTO.getUserId());
             }
         } else if ("USER_DELETED".equals(syncDTO.getEventType())) {
-            userRepository.deleteById(syncDTO.getUserId());
+
+            UUID userId = syncDTO.getUserId();
+            System.out.println(syncDTO.getUserId());
+            deviceService.deleteDevicesByUserId(userId);
+            userRepository.deleteById(userId);
             LOGGER.info("User ID {} and all associated devices successfully deleted from Device-Backend .", syncDTO.getUserId());
         }
     }

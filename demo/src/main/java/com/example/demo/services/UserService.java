@@ -118,7 +118,7 @@ public class UserService {
         syncEvent.setEventType("USER_SYNCED_FOR_DEVICE");
 
 
-        rabbitTemplate.convertAndSend(synchronizationExchange, "user.synced", syncEvent);
+        rabbitTemplate.convertAndSend(synchronizationExchange, "user2.synced", syncEvent);
         LOGGER.info("Published USER_SYNCED event for Device-Backend for ID: {}", user.getId());
     }
 
@@ -139,7 +139,7 @@ public class UserService {
         syncEvent.setUserId(userId);
         syncEvent.setEventType("USER_DELETED");
 
-        rabbitTemplate.convertAndSend(synchronizationExchange, "user.deleted", syncEvent);
+        rabbitTemplate.convertAndSend(synchronizationExchange, "user2.deleted", syncEvent);
         LOGGER.info("Published USER_DELETED event to Device-Backend for ID: {}", userId);
     }
 }

@@ -2,6 +2,7 @@ package com.example.demo.repositories;
 
 import com.example.demo.entities.Device;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -23,7 +24,9 @@ public interface DeviceRepository extends JpaRepository<Device, UUID> {
     List<Device> findByUserId(UUID userId);
 
     @Transactional
-    void deleteByUserId(UUID userId);
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("DELETE FROM Device d WHERE d.userId = :userId")
+    void deleteByUserId(@Param("userId") UUID userId);
 
     /**
      * Example: Custom query
