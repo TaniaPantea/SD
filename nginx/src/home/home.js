@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Container, Jumbotron } from 'reactstrap';
+import { Button, Container } from 'reactstrap';
 
 import BackgroundImg from '../commons/images/blue.png';
 
@@ -15,17 +15,14 @@ const textStyle = { color: 'white', };
 
 function Home() {
     return (
-        <div>
-            <Jumbotron fluid style={backgroundStyle}>
-                <Container fluid>
-                    <h1 className="display-3" style={textStyle}>Energy Utility Platform</h1>
-                    <p className="lead" style={textStyle}> <b>Enabling real time monitoring of smart devices.</b> </p>
-                    <hr className="my-2" />
-                    <p style={textStyle}> <b>This assignment represents the first project of the distributed software system "Integrated
-                        Energy Monitoring Platform". </b> </p>
-
-                </Container>
-            </Jumbotron>
+        <div className="p-5 mb-4 bg-light rounded-3">
+            <Container fluid className="py-5">
+                <h1 className="display-5 fw-bold">Energy Management System</h1>
+                <p className="col-md-8 fs-4">
+                    Monitorizează consumul în timp real și interacționează cu asistentul nostru AI.
+                </p>
+                <Button color="primary" size="lg">Află mai multe</Button>
+            </Container>
         </div>
     );
 }

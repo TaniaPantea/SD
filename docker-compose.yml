@@ -108,7 +108,7 @@ services:
     build:
       context: ./monitoring-backend 
       dockerfile: ./Dockerfile
-    container_name: spring-monitoring
+    #container_name: spring-monitoring
     ports:
       - "8084:8080"
     environment:
@@ -120,6 +120,8 @@ services:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
       - TZ=Europe/Bucharest
+    deploy:
+      replicas: 2
     networks:
       my_net:
     depends_on:
@@ -185,6 +187,29 @@ services:
     depends_on:
       - rabbitmq
     command: /bin/sh -c "echo 'Waiting for RabbitMQ to start...'; sleep 20 && exec java -jar /demo/demo.jar"
+
+  spring-websocket:
+    build:
+      context: ./websocket-backend
+      dockerfile: ./Dockerfile
+    #container_name: spring-websocket
+    ports:
+      - "8085:8080"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - TZ=Europe/Bucharest
+      - GEMINI_API_KEY=${MY_SECRET_KEY}
+    networks:
+      my_net:
+    depends_on:
+      - rabbitmq
+    # Configurare pentru Docker Swarm (Scalabilitate) conform cerințelor
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+    command: /bin/sh -c "echo 'Waiting for RabbitMQ...'; sleep 20 && exec java -jar /app/websocket-service.jar"
 
 
 volumes:

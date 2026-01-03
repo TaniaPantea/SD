@@ -77,4 +77,11 @@ public class RabbitMQConfig {
                 .noargs();
     }
 
+    @Value("${rabbitmq.queue.alert}")
+    private String alertQueueName;
+
+    @Bean
+    public Queue overconsumptionQueue() {
+        return new Queue(alertQueueName, true);
+    }
 }

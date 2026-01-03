@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@stomp/stompjs": "^6.1.2",
     "axios": "^0.18.1",
     "bootstrap": "^4.3.1",
     "jwt-decode": "^4.0.0",
@@ -16,8 +17,10 @@
     "react-router-dom": "^5.3.4",
     "react-scripts": "5.0.1",
     "react-table": "^6.10.0",
+    "react-toastify": "^9.1.3",
     "reactstrap": "^9.2.2",
-    "recharts": "latest"
+    "recharts": "latest",
+    "sockjs-client": "^1.6.1"
   },
   "scripts": {
     "start": "react-scripts start",

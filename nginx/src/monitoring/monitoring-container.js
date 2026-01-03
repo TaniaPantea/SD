@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { CardHeader, Col, Row, FormGroup, Label, Input } from 'reactstrap';
-import * as deviceApi from '../device/api/device-api';
 import * as monitoringApi from './api/monitoring-api';
+import { connectToNotifications, disconnectFromNotifications } from './api/notification-api';
 import { getUserId } from '../commons/auth/jwt-utils';
 import ConsumptionChart from './components/ConsumptionChart';
-import APIResponseErrorMessage from "../commons/errorhandling/api-response-error-message";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function MonitoringContainer() {
     const [loading, setLoading] = useState(true);
@@ -14,18 +15,11 @@ function MonitoringContainer() {
 
     const userId = getUserId();
 
-    useEffect(() => {
-        if (userId) {
-            fetchDevicesAndConsumption();
-        }
-    }, [userId, selectedDate]);
-
-    function fetchDevicesAndConsumption() {
+    //o funcție din useCallback se schimbă DOAR când se schimbă dependențele ei
+    const fetchDevicesAndConsumption = useCallback(() => {
         setLoading(true);
-
         monitoringApi.getDevicesFromMonitoring(userId, (mappings, status, err) => {
             if (mappings !== null && status === 200) {
-
                 const fetchPromises = mappings.map(mapping => {
                     return new Promise(resolve => {
                         monitoringApi.getHourlyConsumption(mapping.deviceId, (consumptionResult, status) => {
@@ -55,12 +49,47 @@ function MonitoringContainer() {
                 if (status !== 404) setError({ status, errorMessage: err });
             }
         });
-    }
+    }, [userId, selectedDate]);
+
+    //nu se face fecth la infinit pt ca o funcție din useCallback se schimbă DOAR când se schimbă dependențele ei
+    useEffect(() => {
+        if (userId) {
+            fetchDevicesAndConsumption();
+        }
+    }, [userId, selectedDate, fetchDevicesAndConsumption]);
+
+    useEffect(() => {
+        if (userId) {
+            console.log("Initializing WebSocket connection for user:", userId);
+
+            //ca sa primeasca raspuns callback la fiecare randare sa nu ramana cu date vechi
+            connectToNotifications(userId, (message) => {
+                toast.error(message, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+
+                fetchDevicesAndConsumption();
+            });
+        }
+
+        return () => {
+            console.log("Terminating WebSocket connection...");
+            // ca sa nu am n alerte identice ca daca las conexiunile deschise se deschid tot mai multe
+            disconnectFromNotifications();
+        };
+    }, [userId, fetchDevicesAndConsumption]);
 
     return (
         <div>
+            <ToastContainer />
+
             <CardHeader className="d-flex justify-content-between align-items-center">
-                <strong>Historical Energy Consumption</strong>
+                <strong>Real-Time & Historical Monitoring</strong>
                 <FormGroup className="mb-0 d-flex align-items-center">
                     <Label for="datePicker" className="mr-2 mb-0">Select Day: </Label>
                     <Input
@@ -72,15 +101,22 @@ function MonitoringContainer() {
                     />
                 </FormGroup>
             </CardHeader>
+
             <br />
+
             <Row>
                 <Col sm={{ size: '10', offset: 1 }}>
                     {loading ? (
-                        <p className="text-center">Loading charts...</p>
+                        <div className="text-center">
+                            <div className="spinner-border text-primary" role="status"></div>
+                            <p>Loading energy dynamics...</p>
+                        </div>
                     ) : (
                         <>
                             {monitoringData.length === 0 && (
-                                <div className="alert alert-info">No data for {selectedDate}.</div>
+                                <div className="alert alert-info">
+                                    No consumption dynamics found for {selectedDate}.
+                                </div>
                             )}
                             {monitoringData.map(data => (
                                 <ConsumptionChart key={data.deviceId} data={data} />
@@ -89,6 +125,12 @@ function MonitoringContainer() {
                     )}
                 </Col>
             </Row>
+
+            {error.status !== 0 && (
+                <div className="alert alert-danger">
+                    Error loading data: {error.errorMessage}
+                </div>
+            )}
         </div>
     );
 }

@@ -15,4 +15,5 @@ public class DeviceSyncDTO implements Serializable {
     private String deviceName;
     private UUID userId;
     private String eventType;
+    private Double maxConsumption;
 }

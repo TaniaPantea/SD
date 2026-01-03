@@ -19,5 +19,5 @@ public class DeviceUserMap implements Serializable {
     private UUID deviceId;
     private String deviceName;
     private UUID userId;
-
+    private Double maxConsumption;
 }

@@ -33,6 +33,7 @@ public class DeviceSyncListener {
             mapping.setDeviceId(syncDTO.getDeviceId());
             mapping.setUserId(syncDTO.getUserId());
             mapping.setDeviceName(syncDTO.getDeviceName());
+            mapping.setMaxConsumption(syncDTO.getMaxConsumption());
             repository.save(mapping);
             LOGGER.info("Device ID {} mapped to User ID {}.", syncDTO.getDeviceId(), syncDTO.getUserId());
         }

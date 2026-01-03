@@ -32,10 +32,17 @@ function isTokenExpired() {
     return user.exp < now;
 }
 
+function getUserName() {
+    const user = getUserFromToken();
+    if (!user) return null;
+    // Verifică unde stochează backend-ul tău numele (sub, name, sau preferred_username)
+    return user.sub || user.name || user.username || null;
+}
+
 function logout() {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
     console.log("User logged out.");
 }
 
-export { getUserFromToken, getUserRole, isTokenExpired, logout, getUserId };
+export { getUserFromToken, getUserRole, isTokenExpired, logout, getUserId, getUserName};
