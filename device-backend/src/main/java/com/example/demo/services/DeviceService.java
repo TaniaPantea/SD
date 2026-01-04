@@ -132,7 +132,8 @@ public class DeviceService {
                 device.getId(),
                 device.getName(),
                 userId,
-                eventType
+                eventType,
+                device.getMaxConsumption()
         );
 
         String routingKey = "DEVICE_DELETED".equals(eventType)

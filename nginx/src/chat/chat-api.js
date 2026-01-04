@@ -2,36 +2,23 @@ import { getStompClient } from '../monitoring/api/notification-api';
 
 export function sendChatMessage(userId, userName, text) {
     const client = getStompClient();
+    const token = localStorage.getItem('token'); // Opțional, poți pune token și aici dacă ai securizat și rutele de SEND
 
-    // În @stomp/stompjs folosim 'active' și verificăm dacă există brokerul
-    if (client && client.active) {
+    if (client && client.active && client.connected) {
         const messagePayload = {
             senderId: userId,
             senderName: userName,
             content: text,
             timestamp: new Date().getTime(),
-            fromAdmin: false
+            isFromAdmin: false
         };
 
         client.publish({
-            destination: "/app/chat", // Asigură-te că în Java ai @MessageMapping("/chat")
+            destination: "/app/chat", // CORECT: Fără /api aici, Spring se ocupă
+            headers: { 'Authorization': 'Bearer ' + token }, // Trimitem token-ul și la publish
             body: JSON.stringify(messagePayload)
         });
     } else {
-        console.error("STOMP client is not active. Cannot send message.");
+        console.error("STOMP client nu este conectat.");
     }
-}
-
-export function subscribeToChat(userId, onMessageReceived) {
-    const client = getStompClient();
-
-    if (client && client.active) {
-        // Metoda subscribe rămâne similară, dar returnează un obiect de dezabonare
-        return client.subscribe(`/user/${userId}/topic/chat`, (msg) => {
-            if (msg.body) {
-                onMessageReceived(JSON.parse(msg.body));
-            }
-        });
-    }
-    return null;
 }

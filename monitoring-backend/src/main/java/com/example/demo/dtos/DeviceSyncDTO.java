@@ -7,13 +7,13 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.util.UUID;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class DeviceSyncDTO implements Serializable {
-    private UUID deviceId;
-    private String deviceName;
-    private UUID userId;
-    private String eventType;
-    private Double maxConsumption;
-}
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public class DeviceSyncDTO implements Serializable {
+        private UUID deviceId;
+        private String deviceName;
+        private UUID userId;
+        private String eventType;
+        private Double maxConsumption;
+    }

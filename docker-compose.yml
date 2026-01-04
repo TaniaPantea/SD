@@ -120,8 +120,6 @@ services:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
       - TZ=Europe/Bucharest
-    deploy:
-      replicas: 2
     networks:
       my_net:
     depends_on:
@@ -192,24 +190,25 @@ services:
     build:
       context: ./websocket-backend
       dockerfile: ./Dockerfile
-    #container_name: spring-websocket
     ports:
       - "8085:8080"
     environment:
+      - DB_IP=db-auth
+      - DB_PORT=5432
+      - DB_DBNAME=auth-db
+      - DB_USER=postgres
+      - DB_PASSWORD=root
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
       - TZ=Europe/Bucharest
-      - GEMINI_API_KEY=${MY_SECRET_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY_ENV}
+      - GEMINI_API_URL=${GEMINI_API_URL_ENV}
     networks:
       my_net:
     depends_on:
       - rabbitmq
-    # Configurare pentru Docker Swarm (Scalabilitate) conform cerințelor
-    deploy:
-      replicas: 2
-      restart_policy:
-        condition: on-failure
-    command: /bin/sh -c "echo 'Waiting for RabbitMQ...'; sleep 20 && exec java -jar /app/websocket-service.jar"
+      - db-auth
+    command: /bin/sh -c "echo 'Waiting for RabbitMQ to start...'; sleep 20 && exec java -jar /demo/demo.jar"
 
 
 volumes:

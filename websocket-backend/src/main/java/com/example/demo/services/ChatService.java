@@ -4,7 +4,10 @@ import com.example.demo.dtos.ChatMessageDTO;
 import com.example.demo.entities.ChatMessage;
 import com.example.demo.repositories.ChatMessageRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ChatService {
@@ -64,5 +67,17 @@ public class ChatService {
         entity.setTimestamp(dto.getTimestamp());
         entity.setFromAdmin(dto.isFromAdmin());
         chatRepository.save(entity);
+    }
+
+    public List<ChatMessageDTO> getMessagesForUser(UUID userId) {
+        return chatRepository.findBySenderIdOrderByTimestampAsc(userId)
+                .stream()
+                .map(entity -> new ChatMessageDTO(
+                        entity.getSenderId(),
+                        entity.getSenderName(),
+                        entity.getContent(),
+                        entity.isFromAdmin()
+                ))
+                .collect(Collectors.toList());
     }
 }

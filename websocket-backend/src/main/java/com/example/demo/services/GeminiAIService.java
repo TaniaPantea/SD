@@ -20,12 +20,19 @@ public class GeminiAIService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     public String getAIResponse(String userQuery) {
+        // Debug: Ar trebui să vezi primele 5 caractere în consolă acum
+        System.out.println("DEBUG: Folosesc cheia: " + (apiKey != null && !apiKey.isEmpty() ? apiKey.substring(0, 5) + "..." : "NULL"));
+
+        System.out.println("URL: " + apiUrl);
+        System.out.println("Key starts with: " + (apiKey != null ? apiKey.substring(0, 5) : "NULL"));
+
         String fullUrl = apiUrl + "?key=" + apiKey;
 
-        String systemContext = "Ești un asistent inteligent pentru o aplicație de monitorizare a energiei. " +
-                "Utilizatorul vede grafice orare (broken line) și primește alerte de supraconsum. " +
-                "Răspunde politicos, scurt și oferă sfaturi despre economisirea energiei. " +
-                "Întrebarea utilizatorului este: ";
+        // Contextul T23: 4 elemente specifice scenei de trafic
+        String systemContext = "Ești un asistent tehnic pentru aplicația T23. " +
+                "Pentru orice întrebare despre 'broken line' (linie discontinuă), explică importanța acestor 4 elemente: " +
+                "1. Vizibilitatea, 2. Gradul de uzură, 3. Curbura drumului, 4. Dinamica vehiculelor. " +
+                "Răspunde scurt și profesional. Întrebare: ";
 
         Map<String, Object> requestBody = Map.of(
                 "contents", List.of(
@@ -37,13 +44,23 @@ public class GeminiAIService {
 
         try {
             ResponseEntity<Map> response = restTemplate.postForEntity(fullUrl, requestBody, Map.class);
-            // Extragem textul din structura complexă a JSON-ului Gemini
-            List candidates = (List) response.getBody().get("candidates");
-            Map content = (Map) ((Map) candidates.get(0)).get("content");
-            List parts = (List) content.get("parts");
-            return (String) ((Map) parts.get(0)).get("text");
+
+            // Parsare sigură a JSON-ului complex Gemini
+            Map<String, Object> body = response.getBody();
+            if (body != null && body.containsKey("candidates")) {
+                List candidates = (List) body.get("candidates");
+                if (!candidates.isEmpty()) {
+                    Map firstCandidate = (Map) candidates.get(0);
+                    Map content = (Map) firstCandidate.get("content");
+                    List parts = (List) content.get("parts");
+                    return (String) ((Map) parts.get(0)).get("text");
+                }
+            }
+            return "[AI Error]: Răspuns neașteptat de la API.";
+
         } catch (Exception e) {
-            return "[AI Error]: Momentan am dificultăți în procesarea cererii, dar te pot ajuta cu regulile de bază.";
+            System.err.println("EROARE APEL GEMINI: " + e.getMessage());
+            return "[AI Error]: Momentan nu pot procesa cererea Gemini.";
         }
     }
 }

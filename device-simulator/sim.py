@@ -28,7 +28,7 @@ def run_simulator():
         for d_id in active_ids:
             measurement = {
                 "deviceId": d_id,
-                "measurementValue": round(random.uniform(0.1, 0.5), 3),
+                "measurementValue": round(random.uniform(100, 200), 3),
                 "timestamp": datetime.now().isoformat()
             }
             

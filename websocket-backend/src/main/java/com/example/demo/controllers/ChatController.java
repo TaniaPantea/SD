@@ -2,11 +2,15 @@ package com.example.demo.controllers;
 
 import com.example.demo.dtos.ChatMessageDTO;
 import com.example.demo.services.ChatService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -29,7 +33,9 @@ public class ChatController {
         chatService.saveMessage(chatMessage);
         //messagingTemplate.convertAndSend("/topic/admin", chatMessage);
 
+        System.out.println("Procesez mesaj de la: " + chatMessage.getSenderId());
         String autoResponse = chatService.processIncomingMessage(chatMessage);
+        System.out.println("Raspuns generat: " + autoResponse);
 
         UUID senderId = autoResponse.startsWith("[AI Response]") ? AI_ID : BOT_ID;
         String senderName = autoResponse.startsWith("[AI Response]") ? "Smart-AI" : "System-Bot";
@@ -43,10 +49,11 @@ public class ChatController {
                 true
         );
 
-        messagingTemplate.convertAndSendToUser(
-                chatMessage.getSenderId().toString(),
-                "/topic/chat",
-                responseDTO
-        );
+        messagingTemplate.convertAndSend("/topic/chat." + chatMessage.getSenderId(), responseDTO);
+    }
+
+    @GetMapping("/history/{userId}")
+    public ResponseEntity<List<ChatMessageDTO>> getChatHistory(@PathVariable UUID userId) {
+        return ResponseEntity.ok(chatService.getMessagesForUser(userId));
     }
 }

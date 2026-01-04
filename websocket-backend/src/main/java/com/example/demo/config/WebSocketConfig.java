@@ -14,6 +14,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic"); // Prefix pentru mesaje de la server la client
         config.setApplicationDestinationPrefixes("/app");//de la client la server
+        config.setUserDestinationPrefix("/user");
         //rice mesaj care începe cu /app trebuie să fie rutat către o metodă marcată cu @MessageMapping dintr-un @Controller
     }
 

@@ -70,15 +70,22 @@ public class MonitoringService {
             Double limit = mapping.get().getMaxConsumption();
             UUID userId = mapping.get().getUserId();
 
-            if (measurementDTO.getMeasurementValue() > limit) {
-                AlertDTO alert = new AlertDTO(
-                        userId,
-                        measurementDTO.getDeviceId(),
-                        "Consum depășit!",
-                        measurementDTO.getMeasurementValue()
-                );
+            // CORECOȚIE: Verificăm dacă limita este null înainte de comparație
+            if (limit != null) {
+                if (measurementDTO.getMeasurementValue() > limit) {
+                    AlertDTO alert = new AlertDTO(
+                            userId,
+                            measurementDTO.getDeviceId(),
+                            "Consum depășit!",
+                            measurementDTO.getMeasurementValue()
+                    );
 
-                rabbitTemplate.convertAndSend("overconsumption-queue", alert);
+                    rabbitTemplate.convertAndSend("overconsumption-queue", alert);
+                    System.out.println("Alertă trimisă pentru user: " + userId);
+                }
+            } else {
+                // Opțional: logăm faptul că un dispozitiv nu are limită setată
+                System.out.println("Dispozitivul " + deviceId + " nu are o limită de consum definită.");
             }
         }
     }
