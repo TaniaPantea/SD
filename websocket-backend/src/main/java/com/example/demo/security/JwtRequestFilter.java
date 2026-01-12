@@ -21,6 +21,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private JwtUtil jwtUtil; // Clasa care decodează efectiv token-ul
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path.startsWith("/ws-notifications");
+    }
+
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
@@ -53,4 +60,5 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
         chain.doFilter(request, response);
     }
+
 }

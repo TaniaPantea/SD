@@ -28,11 +28,11 @@ public class GeminiAIService {
 
         String fullUrl = apiUrl + "?key=" + apiKey;
 
-        // Contextul T23: 4 elemente specifice scenei de trafic
-        String systemContext = "Ești un asistent tehnic pentru aplicația T23. " +
-                "Pentru orice întrebare despre 'broken line' (linie discontinuă), explică importanța acestor 4 elemente: " +
-                "1. Vizibilitatea, 2. Gradul de uzură, 3. Curbura drumului, 4. Dinamica vehiculelor. " +
-                "Răspunde scurt și profesional. Întrebare: ";
+        String systemContext = "(pentru context este un asistent ai pentru o aplicatie de monitorizare a energieie electrice" +
+                ",in care un utilizator simplu vede urmatoarele pagini: " +
+                "pagina de useri unde se pot vizualiza toti utilizatori, " +
+                "pagina de dispozitive in care se pot vizualiza toate dispozitivele" +
+                "si pagina de monitorizare unde se pot vedea grafice despre dispozitivele tale si grafice care indica consumul acestora)";
 
         Map<String, Object> requestBody = Map.of(
                 "contents", List.of(

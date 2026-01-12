@@ -43,12 +43,12 @@ http:
       service: api-monitoring
 
     websocket-api:
-      rule: "Host(`localhost`) && PathPrefix(`/api/ws-notifications`)"
+      rule: "Host(`localhost`) && PathPrefix(`/ws-notifications`)"
       entryPoints:
         - web
       middlewares:
-        #- auth-jwt
-        - strip-api-prefix
+        # auth-jwt
+        # strip-api-prefix
       service: api-websocket
 
   middlewares:

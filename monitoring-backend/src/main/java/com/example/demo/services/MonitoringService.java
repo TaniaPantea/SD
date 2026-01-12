@@ -34,7 +34,6 @@ public class MonitoringService {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    // UPDATE/INSERT a.i. nimeni altcineva să nu intervina, sa nu se faca modificari deodata
     @Transactional
     public void processMeasurement(MeasurementDTO measurementDTO) {
         UUID deviceId = measurementDTO.getDeviceId();
@@ -69,6 +68,7 @@ public class MonitoringService {
         if (mapping.isPresent()) {
             Double limit = mapping.get().getMaxConsumption();
             UUID userId = mapping.get().getUserId();
+            String deviceName = mapping.get().getDeviceName();
 
             // CORECOȚIE: Verificăm dacă limita este null înainte de comparație
             if (limit != null) {
@@ -77,7 +77,8 @@ public class MonitoringService {
                             userId,
                             measurementDTO.getDeviceId(),
                             "Consum depășit!",
-                            measurementDTO.getMeasurementValue()
+                            measurementDTO.getMeasurementValue(),
+                            deviceName
                     );
 
                     rabbitTemplate.convertAndSend("overconsumption-queue", alert);

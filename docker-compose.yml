@@ -61,6 +61,21 @@ services:
     networks:
       my_net:
 
+  db-chat:
+    image: postgres
+    container_name: db-chat
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: chat-db
+    ports:
+      - "5437:5432"
+    volumes:
+      - my-db-chat:/var/lib/postgresql
+    networks:
+      my_net:
+
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
@@ -193,21 +208,19 @@ services:
     ports:
       - "8085:8080"
     environment:
-      - DB_IP=db-auth
+      - DB_IP=db-chat
       - DB_PORT=5432
-      - DB_DBNAME=auth-db
+      - DB_DBNAME=chat-db
       - DB_USER=postgres
       - DB_PASSWORD=root
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
       - TZ=Europe/Bucharest
-      - GEMINI_API_KEY=${GEMINI_API_KEY_ENV}
-      - GEMINI_API_URL=${GEMINI_API_URL_ENV}
     networks:
       my_net:
     depends_on:
       - rabbitmq
-      - db-auth
+      - db-chat
     command: /bin/sh -c "echo 'Waiting for RabbitMQ to start...'; sleep 20 && exec java -jar /demo/demo.jar"
 
 
@@ -217,6 +230,7 @@ volumes:
   my-db-auth:
   my-db-monitoring:
   rabbitmq_data:
+  my-db-chat:
 
 networks:
   my_net:

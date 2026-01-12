@@ -69,15 +69,4 @@ public class ChatService {
         chatRepository.save(entity);
     }
 
-    public List<ChatMessageDTO> getMessagesForUser(UUID userId) {
-        return chatRepository.findBySenderIdOrderByTimestampAsc(userId)
-                .stream()
-                .map(entity -> new ChatMessageDTO(
-                        entity.getSenderId(),
-                        entity.getSenderName(),
-                        entity.getContent(),
-                        entity.isFromAdmin()
-                ))
-                .collect(Collectors.toList());
-    }
 }

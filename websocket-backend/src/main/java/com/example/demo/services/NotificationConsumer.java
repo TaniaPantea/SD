@@ -15,16 +15,13 @@ public class NotificationConsumer {
     }
 
     @RabbitListener(queues = "overconsumption-queue")
+    @RabbitListener(queues = "overconsumption-queue")
     public void receiveAlert(AlertDTO alert) {
-        // Trimite alerta către user-ul specific prin WebSocket
-        messagingTemplate.convertAndSendToUser(
-                alert.getUserId().toString(),
-                //caută în interiorul serverului o sesiune WebSocket care are atașat un Principal
-                // al cărui nume coincide cu acel userId. asta s eface in securityconfig
-                //Spring mapează automat:
-                //user/{userId}/topic/notifications
+
+        messagingTemplate.convertAndSend(
                 "/topic/notifications",
-                "Atenție! Dispozitivul " + alert.getDeviceId() + " a depășit consumul maxim!"
+                alert
         );
     }
+
 }

@@ -1,6 +1,7 @@
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { HOST } from "../../commons/hosts";
+import {toast} from "react-toastify";
 
 let stompClient = null;
 
@@ -8,16 +9,30 @@ export function connectToNotifications(userId, onMessageReceived) {
     const token = localStorage.getItem('token');
 
     stompClient = new Client({
-        webSocketFactory: () => new SockJS(HOST.backend_api + '/api/ws-notifications'),
-        connectHeaders: { 'Authorization': 'Bearer ' + token },
+        webSocketFactory: () => new SockJS(HOST.backend_api + '/ws-notifications'),
 
         onConnect: (frame) => {
             console.log('STOMP Connected: ' + frame);
 
-            // 1. Abonare Notificări Overconsumption (folosește callback-ul primit din Monitoring)
-            stompClient.subscribe(`/user/${userId}/topic/notifications`, (notification) => {
-                onMessageReceived(notification.body);
+            stompClient.subscribe("/topic/notifications", (msg) => {
+                const alert = JSON.parse(msg.body);
+
+                if (alert.userId === userId) {
+                    toast.error(
+                        `Atenție! Dispozitivul ${alert.deviceName} a depășit consumul maxim!`,
+                        {
+                            position: "top-right",
+                            autoClose: 5000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                        }
+                    );
+                }
             });
+
+
 
             // 2. Abonare Chat (AI & Admin) - Trimite datele printr-un eveniment global
             stompClient.subscribe(`/topic/chat.${userId}`, (msg) => {

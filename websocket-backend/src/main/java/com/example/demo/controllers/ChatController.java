@@ -52,8 +52,4 @@ public class ChatController {
         messagingTemplate.convertAndSend("/topic/chat." + chatMessage.getSenderId(), responseDTO);
     }
 
-    @GetMapping("/history/{userId}")
-    public ResponseEntity<List<ChatMessageDTO>> getChatHistory(@PathVariable UUID userId) {
-        return ResponseEntity.ok(chatService.getMessagesForUser(userId));
-    }
 }
