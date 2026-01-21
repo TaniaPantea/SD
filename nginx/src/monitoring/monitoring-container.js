@@ -59,30 +59,17 @@ function MonitoringContainer() {
     }, [userId, selectedDate, fetchDevicesAndConsumption]);
 
     useEffect(() => {
-        if (userId) {
-            console.log("Initializing WebSocket connection for user:", userId);
+        const handleRefreshData = () => {
+            console.log("Notificare primită, reîmprospătez datele...");
+            fetchDevicesAndConsumption();
+        };
 
-            //ca sa primeasca raspuns callback la fiecare randare sa nu ramana cu date vechi
-            connectToNotifications(userId, (message) => {
-                toast.error(message, {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                });
-
-                fetchDevicesAndConsumption();
-            });
-        }
+        window.addEventListener("reload-monitoring-data", handleRefreshData);
 
         return () => {
-            console.log("Terminating WebSocket connection...");
-            // ca sa nu am n alerte identice ca daca las conexiunile deschise se deschid tot mai multe
-            disconnectFromNotifications();
+            window.removeEventListener("reload-monitoring-data", handleRefreshData);
         };
-    }, [userId, fetchDevicesAndConsumption]);
+    }, [fetchDevicesAndConsumption]);
 
     return (
         <div>

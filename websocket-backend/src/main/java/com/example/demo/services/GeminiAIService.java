@@ -20,7 +20,6 @@ public class GeminiAIService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     public String getAIResponse(String userQuery) {
-        // Debug: Ar trebui să vezi primele 5 caractere în consolă acum
         System.out.println("DEBUG: Folosesc cheia: " + (apiKey != null && !apiKey.isEmpty() ? apiKey.substring(0, 5) + "..." : "NULL"));
 
         System.out.println("URL: " + apiUrl);
@@ -45,7 +44,6 @@ public class GeminiAIService {
         try {
             ResponseEntity<Map> response = restTemplate.postForEntity(fullUrl, requestBody, Map.class);
 
-            // Parsare sigură a JSON-ului complex Gemini
             Map<String, Object> body = response.getBody();
             if (body != null && body.containsKey("candidates")) {
                 List candidates = (List) body.get("candidates");
@@ -56,7 +54,7 @@ public class GeminiAIService {
                     return (String) ((Map) parts.get(0)).get("text");
                 }
             }
-            return "[AI Error]: Răspuns neașteptat de la API.";
+            return "[AI Error]: Raspuns neașteptat de la API.";
 
         } catch (Exception e) {
             System.err.println("EROARE APEL GEMINI: " + e.getMessage());

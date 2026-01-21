@@ -124,8 +124,8 @@ services:
       context: ./monitoring-backend 
       dockerfile: ./Dockerfile
     #container_name: spring-monitoring
-    ports:
-      - "8084:8080"
+    # ports:
+    #   - "8084:8080"
     environment:
       - DB_IP=db-monitoring
       - DB_PORT=5432
@@ -135,12 +135,23 @@ services:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
       - TZ=Europe/Bucharest
+      - SERVER_PORT=8080
     networks:
       my_net:
     depends_on:
       - db-monitoring
       - rabbitmq
     command: /bin/sh -c "echo 'Waiting for RabbitMQ to start...'; sleep 20 && exec java -jar /demo/demo.jar"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.monitoring-router.rule=PathPrefix(`/api/monitoring`)"
+      - "traefik.http.routers.monitoring-router.entrypoints=web"
+      - "traefik.http.middlewares.monitoring-strip.stripprefix.prefixes=/api"
+      - "traefik.http.routers.monitoring-router.middlewares=monitoring-strip"
+      - "traefik.http.services.monitoring-service.loadbalancer.server.port=8080"
+    deploy:
+      mode: replicated
+      replicas: 3
       
 
 
@@ -205,8 +216,8 @@ services:
     build:
       context: ./websocket-backend
       dockerfile: ./Dockerfile
-    ports:
-      - "8085:8080"
+    # ports:
+    #   - "8085:8080"
     environment:
       - DB_IP=db-chat
       - DB_PORT=5432
@@ -216,12 +227,24 @@ services:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
       - TZ=Europe/Bucharest
+      - SERVER_PORT=8080
     networks:
       my_net:
     depends_on:
       - rabbitmq
       - db-chat
     command: /bin/sh -c "echo 'Waiting for RabbitMQ to start...'; sleep 20 && exec java -jar /demo/demo.jar"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.chat-router.rule=PathPrefix(`/ws-notifications`) || PathPrefix(`/topic`) || PathPrefix(`/app`)"
+      - "traefik.http.routers.chat-router.entrypoints=web"
+      - "traefik.http.services.chat-service.loadbalancer.server.port=8080"
+      - "traefik.http.services.chat-service.loadbalancer.sticky.cookie=true"
+      - "traefik.http.services.chat-service.loadbalancer.sticky.cookie.name=chat_session_id"
+      - "traefik.http.services.chat-service.loadbalancer.sticky.cookie.httpOnly=true"
+    deploy:
+      mode: replicated
+      replicas: 1
 
 
 volumes:

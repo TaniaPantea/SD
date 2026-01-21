@@ -15,7 +15,6 @@ public class NotificationConsumer {
     }
 
     @RabbitListener(queues = "overconsumption-queue")
-    @RabbitListener(queues = "overconsumption-queue")
     public void receiveAlert(AlertDTO alert) {
 
         messagingTemplate.convertAndSend(

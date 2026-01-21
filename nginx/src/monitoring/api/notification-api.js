@@ -6,7 +6,9 @@ import {toast} from "react-toastify";
 let stompClient = null;
 
 export function connectToNotifications(userId, onMessageReceived) {
-    const token = localStorage.getItem('token');
+    if (stompClient && stompClient.active) {
+        return;
+    }
 
     stompClient = new Client({
         webSocketFactory: () => new SockJS(HOST.backend_api + '/ws-notifications'),
@@ -19,7 +21,7 @@ export function connectToNotifications(userId, onMessageReceived) {
 
                 if (alert.userId === userId) {
                     toast.error(
-                        `Atenție! Dispozitivul ${alert.deviceName} a depășit consumul maxim!`,
+                        `Atentie! Dispozitivul ${alert.deviceName} a depasit consumul maxim!`,
                         {
                             position: "top-right",
                             autoClose: 5000,
@@ -29,12 +31,12 @@ export function connectToNotifications(userId, onMessageReceived) {
                             draggable: true,
                         }
                     );
+                    window.dispatchEvent(new CustomEvent("reload-monitoring-data"));
                 }
             });
 
 
-
-            // 2. Abonare Chat (AI & Admin) - Trimite datele printr-un eveniment global
+            //  eveniment global
             stompClient.subscribe(`/topic/chat.${userId}`, (msg) => {
                 const chatMsg = JSON.parse(msg.body);
                 window.dispatchEvent(new CustomEvent("new-chat-message", { detail: chatMsg }));
@@ -57,4 +59,36 @@ export function disconnectFromNotifications() {
 
 export function getStompClient() {
     return stompClient;
+}
+
+
+export function subscribeToAdminMessages(onMessageReceived) {
+    const client = getStompClient();
+    if (client && client.connected) {
+        console.log("DEBUG: Adminul se abonează la /topic/admin");
+        return client.subscribe("/topic/admin", (msg) => {
+            console.log("DEBUG: Mesaj primit de Admin de la server:", msg.body);
+            const chatMsg = JSON.parse(msg.body);
+            onMessageReceived(chatMsg);
+        });
+    } else {
+        console.error("DEBUG: Clientul STOMP nu este conectat la subscriere!");
+    }
+}
+
+export function sendAdminReply(receiverId, text) {
+    const client = getStompClient();
+    if (client && client.connected) {
+        const replyPayload = {
+            receiverId: receiverId, // ID utiliz cui ii rasp, cel curent
+            content: text,
+            timestamp: new Date().getTime(),
+            isFromAdmin: true
+        };
+
+        client.publish({
+            destination: "/app/admin.reply",
+            body: JSON.stringify(replyPayload)
+        });
+    }
 }

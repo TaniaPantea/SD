@@ -43,6 +43,12 @@ function NavigationBar() {
                             <DropdownItem>
                                 <NavLink href="/monitoring">Monitoring</NavLink>
                             </DropdownItem>
+                            {role === 'ADMIN' && (
+                                <DropdownItem>
+                                    <NavLink href="/admin-chat">User support</NavLink>
+                                </DropdownItem>
+                            )}
+
                         </DropdownMenu>
 
                     </UncontrolledDropdown>

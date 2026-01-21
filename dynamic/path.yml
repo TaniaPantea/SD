@@ -33,24 +33,6 @@ http:
         - strip-api-prefix # Remove /api prefix before forwarding
       service: api-auth
 
-    monitoring-api:
-      rule: "Host(`localhost`) && PathPrefix(`/api/monitoring`)"
-      entryPoints:
-        - web
-      middlewares:
-        - auth-jwt 
-        - strip-api-prefix
-      service: api-monitoring
-
-    websocket-api:
-      rule: "Host(`localhost`) && PathPrefix(`/ws-notifications`)"
-      entryPoints:
-        - web
-      middlewares:
-        # auth-jwt
-        # strip-api-prefix
-      service: api-websocket
-
   middlewares:
     strip-api-prefix: # Middleware to remove /api prefix
       stripPrefix:
@@ -65,6 +47,21 @@ http:
     auth-jwt:
       forwardAuth:
         address: "http://spring-auth:8080/auth/validate"
+
+    cors:
+      headers:
+        accessControlAllowMethods:
+          - "GET"
+          - "OPTIONS"
+          - "PUT"
+          - "POST"
+          - "DELETE"
+        accessControlAllowHeaders:
+          - "*"
+        accessControlAllowOriginList:
+          - "*"
+        accessControlMaxAge: 100
+        addVaryHeader: true
         
 
   services:
@@ -87,14 +84,4 @@ http:
       loadBalancer:
         servers:
           - url: "http://spring-auth:8080" # Container name solved by Docker DNS
-
-    api-monitoring:
-      loadBalancer:
-        servers:
-          - url: "http://spring-monitoring:8080" 
-
-    api-websocket:
-      loadBalancer:
-        servers:
-          - url: "http://spring-websocket:8080"
 

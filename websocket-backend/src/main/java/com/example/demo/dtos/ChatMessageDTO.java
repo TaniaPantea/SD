@@ -4,24 +4,25 @@ import java.util.UUID;
 
 public class ChatMessageDTO {
     private UUID senderId;
-    private String senderName;  // Numele utiliz afișare în interfață
+    private String senderName;
     private String content;
     private long timestamp;
     private boolean isFromAdmin;
+    private UUID receiverId;//pt cand adminul trm msj
 
     public ChatMessageDTO() {
         this.timestamp = System.currentTimeMillis();
     }
 
-    public ChatMessageDTO(UUID senderId, String senderName, String content, boolean isFromAdmin) {
+    public ChatMessageDTO(UUID senderId, String senderName, String content, boolean isFromAdmin, UUID receiverId) {
         this.senderId = senderId;
         this.senderName = senderName;
         this.content = content;
         this.isFromAdmin = isFromAdmin;
         this.timestamp = System.currentTimeMillis();
+        this.receiverId = receiverId;
     }
 
-    // Getters și Setters
     public UUID getSenderId() { return senderId; }
     public void setSenderId(UUID senderId) { this.senderId = senderId; }
 
@@ -36,4 +37,7 @@ public class ChatMessageDTO {
 
     public boolean isFromAdmin() { return isFromAdmin; }
     public void setFromAdmin(boolean fromAdmin) { isFromAdmin = fromAdmin; }
+
+    public UUID getReceiverId() { return receiverId; }
+    public void setReceiverId(UUID receiverId) { this.receiverId = receiverId; }
 }

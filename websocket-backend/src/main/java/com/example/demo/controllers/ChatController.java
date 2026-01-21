@@ -19,7 +19,6 @@ public class ChatController {
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatService chatService;
 
-    // Definim ID-uri fixe pentru sistem
     private static final UUID BOT_ID = UUID.fromString("00000000-0000-0000-0000-000000000000");
     private static final UUID AI_ID = UUID.fromString("11111111-1111-1111-1111-111111111111");
 
@@ -31,25 +30,35 @@ public class ChatController {
     @MessageMapping("/chat")
     public void sendMessage(@Payload ChatMessageDTO chatMessage) {
         chatService.saveMessage(chatMessage);
-        //messagingTemplate.convertAndSend("/topic/admin", chatMessage);
 
-        System.out.println("Procesez mesaj de la: " + chatMessage.getSenderId());
+        if (chatMessage.getContent().toLowerCase().startsWith("admin")) {
+            System.out.println("DEBUG: Trimit mesaj către topicul /topic/admin");
+            messagingTemplate.convertAndSend("/topic/admin", chatMessage);
+            return;
+        }
+
         String autoResponse = chatService.processIncomingMessage(chatMessage);
-        System.out.println("Raspuns generat: " + autoResponse);
 
-        UUID senderId = autoResponse.startsWith("[AI Response]") ? AI_ID : BOT_ID;
-        String senderName = autoResponse.startsWith("[AI Response]") ? "Smart-AI" : "System-Bot";
-
+        UUID systemSenderId = autoResponse.startsWith("[AI Response]") ? AI_ID : BOT_ID;
+        String systemSenderName = autoResponse.startsWith("[AI Response]") ? "Smart-AI" : "System-Bot";
         String cleanResponse = autoResponse.replace("[AI Response] ", "");
 
         ChatMessageDTO responseDTO = new ChatMessageDTO(
-                senderId,
-                senderName,
+                systemSenderId,
+                systemSenderName,
                 cleanResponse,
-                true
+                true,
+                chatMessage.getSenderId()
         );
 
         messagingTemplate.convertAndSend("/topic/chat." + chatMessage.getSenderId(), responseDTO);
+    }
+
+    @MessageMapping("/admin.reply")
+    public void adminReply(@Payload ChatMessageDTO reply) {
+        reply.setFromAdmin(true);
+        reply.setSenderName("Admin-Support");
+        messagingTemplate.convertAndSend("/topic/chat." + reply.getReceiverId(), reply);
     }
 
 }

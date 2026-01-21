@@ -1,4 +1,5 @@
 import { jwtDecode } from "jwt-decode";
+import {disconnectFromNotifications} from "../../monitoring/api/notification-api";
 
 function getUserFromToken() {
     const token = localStorage.getItem("token");
@@ -42,6 +43,7 @@ function getUserName() {
 function logout() {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
+    disconnectFromNotifications();
     console.log("User logged out.");
 }
 

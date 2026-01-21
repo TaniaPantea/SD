@@ -23,7 +23,6 @@ public class ChatService {
     public String processIncomingMessage(ChatMessageDTO message) {
         String content = message.getContent().toLowerCase();
 
-        // 1. Rule-Based Support (Conditional Logic)
         if (content.contains("salut") || content.contains("buna") || content.contains("bună")) {
             return "Bună ziua! Sunt asistentul dumneavoastră virtual. Cu ce vă pot ajuta astăzi?";
         }

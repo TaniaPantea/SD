@@ -13,7 +13,7 @@ export function sendChatMessage(userId, userName, text) {
         };
 
         client.publish({
-            destination: "/app/chat", // CORECT: Fără /api aici, Spring se ocupă
+            destination: "/app/chat",
             body: JSON.stringify(messagePayload)
         });
     } else {
